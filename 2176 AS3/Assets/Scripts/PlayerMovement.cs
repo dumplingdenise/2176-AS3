@@ -1,82 +1,119 @@
-using UnityEngine;
-using UnityEngine.InputSystem;
+﻿using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-   /* void Start()
-    {
-        
-    }
+    [Header("Movement Settings")]
+    public float playerSpeed = 5.0f;
+    public float jumpHeight = 1.5f;
+    public float gravityValue = -9.81f;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }*/
+    [Header("Ground Check Settings")]
+    public Transform groundCheckPoint;     
+    public float groundDistance = 0.4f;    
+    public LayerMask groundMask;           
 
-    private float playerSpeed = 5.0f;
-    private float jumpHeight = 1.5f;
-    private float gravityValue = -9.81f;
+    [Header("References")]
+    public Animator playerAnim;           
+    public Transform cameraTransform;      
 
     private CharacterController controller;
     private Vector3 playerVelocity;
     private bool groundedPlayer;
 
-    [Header("Input Actions")]
-    public InputActionReference moveAction; // expects Vector2
-    public InputActionReference jumpAction; // expects Button
-
-    private void Awake()
+    void Awake()
     {
         controller = GetComponent<CharacterController>();
         if (controller == null)
         {
             controller = gameObject.AddComponent<CharacterController>();
         }
+
+        if (playerAnim == null)
+        {
+            playerAnim = GetComponent<Animator>();
+            if (playerAnim == null)
+                Debug.LogWarning("⚠️ Animator not found on player!");
+        }
+
+        if (cameraTransform == null && Camera.main != null)
+        {
+            cameraTransform = Camera.main.transform;
+        }
     }
 
-    private void OnEnable()
+    void Start()
     {
-        moveAction.action.Enable();
-        jumpAction.action.Enable();
-    }
-
-    private void OnDisable()
-    {
-        moveAction.action.Disable();
-        jumpAction.action.Disable();
+        groundedPlayer = true;
     }
 
     void Update()
     {
-        groundedPlayer = controller.isGrounded;
+        HandleGroundCheck();
+        HandleMovement();
+        HandleAnimation();
+    }
+
+    void HandleGroundCheck()
+    {
+        groundedPlayer = Physics.Raycast(
+            groundCheckPoint.position,
+            Vector3.down,
+            groundDistance,
+            groundMask
+        );
+
+        Debug.DrawRay(groundCheckPoint.position, Vector3.down * groundDistance,
+        groundedPlayer ? Color.green : Color.red);
+
+
         if (groundedPlayer && playerVelocity.y < 0)
         {
-            playerVelocity.y = 0f;
+            playerVelocity.y = -2f * Time.deltaTime;
         }
+    }
 
-        // Read input
-        Vector2 input = moveAction.action.ReadValue<Vector2>();
-        Vector3 move = new Vector3(input.x, 0, input.y);
-        move = Vector3.ClampMagnitude(move, 1f);
+    void HandleMovement()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
 
-        if (move != Vector3.zero)
+        Vector3 camForward = Vector3.Scale(cameraTransform.forward, new Vector3(1, 0, 1)).normalized;
+        Vector3 camRight = cameraTransform.right;
+        Vector3 move = (camForward * vertical + camRight * horizontal).normalized;
+
+        controller.Move(move * playerSpeed * Time.deltaTime);
+
+        if (move.magnitude > 0.1f)
         {
-            transform.forward = move;
+            Quaternion targetRotation = Quaternion.LookRotation(move);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
         }
 
-        // Jump
-        if (jumpAction.action.triggered && groundedPlayer)
+        if (Input.GetButtonDown("Jump") && groundedPlayer)
         {
             playerVelocity.y = Mathf.Sqrt(jumpHeight * -2.0f * gravityValue);
+            groundedPlayer = false;
         }
 
-        // Apply gravity
         playerVelocity.y += gravityValue * Time.deltaTime;
+        controller.Move(playerVelocity * Time.deltaTime);
+    }
+    void HandleAnimation()
+    {
+        if (playerAnim == null) return;
 
-        // Combine horizontal and vertical movement
-        Vector3 finalMove = (move * playerSpeed) + (playerVelocity.y * Vector3.up);
-        controller.Move(finalMove * Time.deltaTime);
+        float mag = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")).magnitude;
+
+        playerAnim.SetFloat("Mag", mag, 0.1f, Time.deltaTime); // smooth damp
+        playerAnim.SetBool("isGrounded", groundedPlayer);
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        if (groundCheckPoint != null)
+        {
+            Gizmos.color = groundedPlayer ? Color.green : Color.red;
+            Gizmos.DrawLine(groundCheckPoint.position, groundCheckPoint.position + Vector3.down * groundDistance);
+        }
     }
 }
