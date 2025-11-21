@@ -1,46 +1,61 @@
-using System;
 using System.Collections;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class DoorInteraction : MonoBehaviour
 {
     public float openAngle = 90f;
     public float openSpeed = 2f;
-    public bool isOpen = false;
 
+    private bool isOpen = false;
     private Quaternion _closedRotation;
-    private Quaternion _openRotation;
-    private Coroutine _currentCoroutine;
+    private Quaternion _openRotationForward;
+    private Quaternion _openRotationBackward;
+
+    public Transform player; // assign in Inspector
 
     void Start()
     {
         _closedRotation = transform.rotation;
-        _openRotation = Quaternion.Euler(transform.eulerAngles + new Vector3(0, openAngle, 0));
+
+        // Two possible open directions:
+        _openRotationForward = Quaternion.Euler(transform.eulerAngles + new Vector3(0, openAngle, 0));
+        _openRotationBackward = Quaternion.Euler(transform.eulerAngles + new Vector3(0, -openAngle, 0));
     }
 
-    private void Update()
+    void Update()
     {
+        if (Input.GetMouseButtonDown(0))
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                if (_currentCoroutine != null) StopCoroutine(_currentCoroutine);
-                _currentCoroutine = StartCoroutine(ToggleDoor());
-            }
+            StartCoroutine(ToggleDoor());
         }
     }
 
-    private IEnumerator ToggleDoor()
+    IEnumerator ToggleDoor()
     {
-        Quaternion targetRotation = isOpen ? _closedRotation : _openRotation;
         isOpen = !isOpen;
 
-        while (Quaternion.Angle(transform.rotation, targetRotation) > 0.01f)
+        Quaternion targetRot = _closedRotation;
+
+        if (isOpen)
         {
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * openSpeed);
+            // Determine which side the player is on to prevent the door from slamming the player LMAO
+            Vector3 toPlayer = (player.position - transform.position).normalized;
+            float dot = Vector3.Dot(transform.forward, toPlayer);
+
+            targetRot = (dot > 0) ? _openRotationBackward : _openRotationForward;
+        }
+
+        // Smooth rotation using RotateTowards (never stops early, does a full open and close)
+        while (Quaternion.Angle(transform.rotation, targetRot) > 0.01f)
+        {
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                targetRot,
+                openSpeed * 100f * Time.deltaTime
+            );
             yield return null;
         }
 
-        transform.rotation = targetRotation;
+        transform.rotation = targetRot; // Snap to exact target rotation
     }
 }
