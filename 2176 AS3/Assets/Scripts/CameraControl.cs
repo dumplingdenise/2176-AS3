@@ -10,6 +10,8 @@ public class CameraControl : MonoBehaviour
 
     public float switchSpeed = 5f;
 
+    public MeshRenderer hatMesh;
+
     private Transform currentTarget;
     private bool isFirstPerson = false;
 
@@ -24,11 +26,14 @@ public class CameraControl : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1))
         {
+
             isFirstPerson = !isFirstPerson;
             currentTarget = isFirstPerson ? FPCameraTarget : TPCameraTarget;
+
+            hatMesh.enabled = !isFirstPerson;
         }
 
         transform.position = Vector3.Lerp(transform.position, currentTarget.position, pLerp);
-        transform.rotation = Quaternion.Lerp(transform.rotation, currentTarget.rotation, rLerp);
+        /*transform.rotation = Quaternion.Lerp(transform.rotation, currentTarget.rotation, rLerp);*/
     }
 }

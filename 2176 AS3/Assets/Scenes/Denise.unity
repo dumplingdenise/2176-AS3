@@ -658,6 +658,7 @@ MonoBehaviour:
   pLerp: 0.02
   rLerp: 0.01
   switchSpeed: 5
+  hatMesh: {fileID: 2145176813}
 --- !u!1 &982036191
 GameObject:
   m_ObjectHideFlags: 0
@@ -1075,8 +1076,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sensitivity: 2
-  minY: 0
-  maxY: 0
+  minY: -12
+  maxY: 70
 --- !u!1 &1974476793
 GameObject:
   m_ObjectHideFlags: 0
@@ -1116,6 +1117,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 25183138}
     m_Modifications:
+    - target: {fileID: -8753333483642116288, guid: fdc3332da70f9b64bb847574dd1ca415, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fdc3332da70f9b64bb847574dd1ca415, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1156,12 +1161,24 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3234361240640084177, guid: fdc3332da70f9b64bb847574dd1ca415, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: fdc3332da70f9b64bb847574dd1ca415, type: 3}
       propertyPath: m_Name
       value: Skeleton_Mage
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: fdc3332da70f9b64bb847574dd1ca415, type: 3}
       propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2870523794981691266, guid: fdc3332da70f9b64bb847574dd1ca415, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4728413743036674231, guid: fdc3332da70f9b64bb847574dd1ca415, type: 3}
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -1282,6 +1299,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &2145176813 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -8753333483642116288, guid: fdc3332da70f9b64bb847574dd1ca415, type: 3}
+  m_PrefabInstance: {fileID: 2002736011}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
