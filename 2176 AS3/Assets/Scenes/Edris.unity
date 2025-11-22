@@ -343,8 +343,9 @@ GameObject:
   m_Component:
   - component: {fileID: 70936213}
   - component: {fileID: 70936214}
-  m_Layer: 0
-  m_Name: DoorPivot
+  - component: {fileID: 70936215}
+  m_Layer: 6
+  m_Name: NormalDoorPivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -381,6 +382,27 @@ MonoBehaviour:
   openAngle: 90
   openSpeed: 2
   player: {fileID: 25183138}
+--- !u!65 &70936215
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 70936212}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.5, y: 3, z: 6}
+  m_Center: {x: -0.94, y: 1.42, z: 0.13}
 --- !u!1 &163141033
 GameObject:
   m_ObjectHideFlags: 0
@@ -746,6 +768,7 @@ MonoBehaviour:
   pLerp: 0.02
   rLerp: 0.01
   switchSpeed: 5
+  hatMesh: {fileID: 0}
 --- !u!1 &982036191
 GameObject:
   m_ObjectHideFlags: 0
@@ -864,7 +887,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1025551826}
   m_Layer: 0
-  m_Name: Wall_Doors
+  m_Name: Wall_NormalDoors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1533,7 +1556,7 @@ GameObject:
   - component: {fileID: 7915667599120758451}
   - component: {fileID: 3791780285906083676}
   - component: {fileID: 8671027867607731754}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1562,7 +1585,7 @@ GameObject:
   - component: {fileID: 4425455460312442316}
   - component: {fileID: 4425455460312442315}
   m_Layer: 0
-  m_Name: wall_door
+  m_Name: wall_normaldoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
