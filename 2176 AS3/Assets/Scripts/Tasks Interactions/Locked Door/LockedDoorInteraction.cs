@@ -15,7 +15,7 @@ public class LockedDoorInteraction : MonoBehaviour
     public GameObject interactionUI;        // "Left click to open"
     public GameObject lockedUI;             // "Door is locked"
 
-    private bool canOpen = false;
+    private bool playerInRange = false;
 
     void Start()
     {
@@ -23,22 +23,30 @@ public class LockedDoorInteraction : MonoBehaviour
 
         _openRotationForward = Quaternion.Euler(transform.eulerAngles + new Vector3(0, openAngle, 0));
         _openRotationBackward = Quaternion.Euler(transform.eulerAngles + new Vector3(0, -openAngle, 0));
+
+        interactionUI.SetActive(false);
+        lockedUI.SetActive(false);
     }
 
     void Update()
     {
-        // Try to open door only if player has key
-        if (canOpen && Input.GetMouseButtonDown(0))
+        if (playerInRange)
         {
             if (KeyPickup.playerHasKey)
             {
-                interactionUI.SetActive(false);
+                // Show interaction UI, hide locked UI
+                interactionUI.SetActive(true);
                 lockedUI.SetActive(false);
-                StartCoroutine(ToggleDoor());
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    StartCoroutine(ToggleDoor());
+                }
             }
             else
             {
-                // show locked message
+                // Show locked UI, hide interaction UI
+                interactionUI.SetActive(false);
                 lockedUI.SetActive(true);
             }
         }
@@ -48,8 +56,19 @@ public class LockedDoorInteraction : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            canOpen = true;
-            interactionUI.SetActive(true);   // Show "Left click to open"
+            playerInRange = true;
+
+            // Show correct UI immediately
+            if (KeyPickup.playerHasKey)
+            {
+                interactionUI.SetActive(true);
+                lockedUI.SetActive(false);
+            }
+            else
+            {
+                interactionUI.SetActive(false);
+                lockedUI.SetActive(true);
+            }
         }
     }
 
@@ -57,7 +76,7 @@ public class LockedDoorInteraction : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            canOpen = false;
+            playerInRange = false;
             interactionUI.SetActive(false);
             lockedUI.SetActive(false);
         }
@@ -90,4 +109,3 @@ public class LockedDoorInteraction : MonoBehaviour
         transform.rotation = targetRot;
     }
 }
-
