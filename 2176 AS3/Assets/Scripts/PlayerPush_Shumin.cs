@@ -20,11 +20,13 @@ public class PlayerPush_Shumin : MonoBehaviour
     {
         Rigidbody body = hit.collider.attachedRigidbody;
 
+        // no rigidbody = nothing to push
         if (body == null || body.isKinematic)
         {
             return;
         }
 
+        //Important: RMB TO ADD TAG FOR PUSHING TO WORK
         if (!hit.collider.CompareTag("Pushable"))
         {
             return;
