@@ -6,54 +6,75 @@ public class LockedDoorInteraction : MonoBehaviour
     public float openAngle = 90f;
     public float openSpeed = 2f;
 
-    public Transform player;
-
     private bool isOpen = false;
-    private bool playerInRange = false;
+    private Quaternion _closedRotation;
+    private Quaternion _openRotationForward;
+    private Quaternion _openRotationBackward;
 
-    private Quaternion closedRotation;
-    private Quaternion openRotationForward;
-    private Quaternion openRotationBackward;
+    public Transform player;
+    public GameObject interactionUI;        // "Left click to open"
+    public GameObject lockedUI;             // "Door is locked"
+
+    private bool canOpen = false;
 
     void Start()
     {
-        closedRotation = transform.rotation;
+        _closedRotation = transform.rotation;
 
-        openRotationForward = Quaternion.Euler(transform.eulerAngles + new Vector3(0, openAngle, 0));
-        openRotationBackward = Quaternion.Euler(transform.eulerAngles + new Vector3(0, -openAngle, 0));
+        _openRotationForward = Quaternion.Euler(transform.eulerAngles + new Vector3(0, openAngle, 0));
+        _openRotationBackward = Quaternion.Euler(transform.eulerAngles + new Vector3(0, -openAngle, 0));
     }
 
     void Update()
     {
-        if (playerInRange && Input.GetKeyDown(KeyCode.E))
+        // Try to open door only if player has key
+        if (canOpen && Input.GetMouseButtonDown(0))
         {
-            TryOpenDoor();
+            if (KeyPickup.playerHasKey)
+            {
+                interactionUI.SetActive(false);
+                lockedUI.SetActive(false);
+                StartCoroutine(ToggleDoor());
+            }
+            else
+            {
+                // show locked message
+                lockedUI.SetActive(true);
+            }
         }
     }
 
-    void TryOpenDoor()
+    void OnTriggerEnter(Collider other)
     {
-        if (!PlayerInventory.hasKey)
+        if (other.CompareTag("Player"))
         {
-            InteractionUI.instance.ShowMessage("Door Locked. Find a key.");
-            return;
+            canOpen = true;
+            interactionUI.SetActive(true);   // Show "Left click to open"
         }
+    }
 
-        StartCoroutine(ToggleDoor());
+    void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            canOpen = false;
+            interactionUI.SetActive(false);
+            lockedUI.SetActive(false);
+        }
     }
 
     IEnumerator ToggleDoor()
     {
         isOpen = !isOpen;
 
-        Quaternion targetRot = closedRotation;
+        Quaternion targetRot = _closedRotation;
 
         if (isOpen)
         {
             Vector3 toPlayer = (player.position - transform.position).normalized;
             float dot = Vector3.Dot(transform.forward, toPlayer);
 
-            targetRot = (dot > 0) ? openRotationBackward : openRotationForward;
+            targetRot = (dot > 0) ? _openRotationBackward : _openRotationForward;
         }
 
         while (Quaternion.Angle(transform.rotation, targetRot) > 0.01f)
@@ -63,32 +84,10 @@ public class LockedDoorInteraction : MonoBehaviour
                 targetRot,
                 openSpeed * 100f * Time.deltaTime
             );
-
             yield return null;
         }
 
         transform.rotation = targetRot;
     }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            playerInRange = true;
-
-            if (!PlayerInventory.hasKey)
-                InteractionUI.instance.ShowMessage("Door Locked");
-            else
-                InteractionUI.instance.ShowMessage("Press E to open door");
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            playerInRange = false;
-            InteractionUI.instance.ClearMessage();
-        }
-    }
 }
+
