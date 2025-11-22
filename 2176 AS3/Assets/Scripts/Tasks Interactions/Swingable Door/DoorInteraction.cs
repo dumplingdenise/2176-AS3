@@ -3,65 +3,126 @@ using UnityEngine;
 
 public class DoorInteraction : MonoBehaviour
 {
-    public float openAngle = 90f;
-    public float openSpeed = 2f;
+    [Header("Door Settings")]
+    public float openAngle = 90f;        // How far the door swings
+    public float openSpeed = 2f;         // Speed of rotation
 
-    private bool isOpen = false;
-    private Quaternion _closedRotation;
-    private Quaternion _openRotationForward;
-    private Quaternion _openRotationBackward;
+    private bool isOpen = false;         // Tracks if the door is currently open
+    private bool isMoving = false;       // Prevents starting multiple coroutines
 
-    public Transform player;         // assign in Inspector
-    public GameObject interactionUI;        // assign in Inspector
+    private Quaternion _closedRotation;         // Original rotation of the door
+    private Quaternion _openRotationForward;    // Rotation for opening forward
+    private Quaternion _openRotationBackward;   // Rotation for opening backward
 
-    private bool canOpen = false;   // This is only true when player is inside trigger
+    [Header("Player Reference")]
+    public Transform player; // Assign the player GameObject in the inspector
+
+    [Header("Interaction UI(s)")]
+    public GameObject[] interactionUIs; // Array for front and back UI texts
+
+    [Header("Audio (Optional)")]
+    public AudioSource doorAudio;    // Optional audio source
+    public AudioClip openClip;       // Sound when door opens
+    public AudioClip closeClip;      // Sound when door closes
+
+    private bool canOpen = false; // True if player is inside the trigger
 
     void Start()
     {
+
+        if (player == null) Debug.LogWarning("Player reference is missing!");
+        if (interactionUIs == null || interactionUIs.Length < 2)
+            Debug.LogWarning("Please assign front and back UI texts to interactionUIs array!");
+
+        // Store the door's original rotation
         _closedRotation = transform.rotation;
 
+        // Calculate the target rotations for opening in both directions
         _openRotationForward = Quaternion.Euler(transform.eulerAngles + new Vector3(0, openAngle, 0));
         _openRotationBackward = Quaternion.Euler(transform.eulerAngles + new Vector3(0, -openAngle, 0));
+
+        HideAllUI(); // Hide UI at start
     }
 
     void Update()
     {
-        // Only open when inside trigger and click left mouse
+        // Open the door when player is inside trigger and left-clicks
         if (canOpen && Input.GetMouseButtonDown(0))
         {
-            interactionUI.SetActive(false); // Interaction UI Text to disappear after opening the door.
-            StartCoroutine(ToggleDoor());
+            HideAllUI();                        // Hide UI while door is moving
+            StartCoroutine(ToggleDoor());       // Start smooth rotation
         }
     }
 
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
+        {
             canOpen = true;
-        interactionUI.SetActive(true);
+
+            if (interactionUIs != null && interactionUIs.Length >= 2)
+            {
+                // Determine which side of the door the player is on
+                Vector3 toPlayer = (player.position - transform.position).normalized;
+                float dot = Vector3.Dot(transform.forward, toPlayer);
+
+                if (dot > 0)
+                {
+                    interactionUIs[1].SetActive(true);      // Show back text
+                    interactionUIs[0].SetActive(false);
+                }
+                else
+                {
+                    interactionUIs[0].SetActive(true);      // Show front text
+                    interactionUIs[1].SetActive(false);
+                }
+            }
+        }
     }
 
     void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
+        {
             canOpen = false;
-        interactionUI.SetActive(false);
+            HideAllUI();        // Hide both UIs when leaving trigger
+        }
     }
 
+    // Helper method to hide all interaction UI elements
+    private void HideAllUI()
+    {
+        if (interactionUIs == null) return;
+
+        foreach (var ui in interactionUIs)
+        {
+            if (ui != null)
+                ui.SetActive(false);
+        }
+    }
+
+    // Coroutine to smoothly open/close the door
     IEnumerator ToggleDoor()
     {
-        isOpen = !isOpen;
+        if (isMoving) yield break; // Prevent overlapping rotations
+        isMoving = true;
 
+        isOpen = !isOpen; // Toggle door state
         Quaternion targetRot = _closedRotation;
 
         if (isOpen)
         {
+            // Choose the rotation direction based on player position
             Vector3 toPlayer = (player.position - transform.position).normalized;
             float dot = Vector3.Dot(transform.forward, toPlayer);
-
             targetRot = (dot > 0) ? _openRotationBackward : _openRotationForward;
         }
 
+        // Play door sound if available
+        if (doorAudio != null)
+            doorAudio.PlayOneShot(isOpen ? openClip : closeClip);
+
+        // Smooth rotation over time
         while (Quaternion.Angle(transform.rotation, targetRot) > 0.01f)
         {
             transform.rotation = Quaternion.RotateTowards(
@@ -72,7 +133,11 @@ public class DoorInteraction : MonoBehaviour
             yield return null;
         }
 
-        transform.rotation = targetRot;
+        transform.rotation = targetRot; // Ensure exact final rotation
+        isMoving = false;
     }
 }
+
+
+
 
