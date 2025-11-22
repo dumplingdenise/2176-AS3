@@ -12,8 +12,8 @@ public class LockedDoorInteraction : MonoBehaviour
     private Quaternion _openRotationBackward;
 
     public Transform player;
-    public GameObject interactionUI;        // "Left click to open"
-    public GameObject lockedUI;             // "Door is locked"
+    public GameObject interactionUI;        // Shows the "Left click to open"
+    public GameObject lockedUI;             // Shows the "Door is locked"
 
     private bool playerInRange = false;
 
@@ -58,7 +58,7 @@ public class LockedDoorInteraction : MonoBehaviour
         {
             playerInRange = true;
 
-            // Show correct UI immediately
+            // Show the correct UI immediately
             if (KeyPickup.playerHasKey)
             {
                 interactionUI.SetActive(true);
@@ -72,7 +72,7 @@ public class LockedDoorInteraction : MonoBehaviour
         }
     }
 
-    void OnTriggerExit(Collider other)
+    void OnTriggerExit(Collider other)      // when player is out of the range, the UI text should not be triggered.
     {
         if (other.CompareTag("Player"))
         {
