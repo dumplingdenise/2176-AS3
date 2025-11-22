@@ -12,6 +12,7 @@ public class DoorInteraction : MonoBehaviour
     private Quaternion _openRotationBackward;
 
     public Transform player;         // assign in Inspector
+    public GameObject interactionUI;        // assign in Inspector
 
     private bool canOpen = false;   // This is only true when player is inside trigger
 
@@ -28,6 +29,7 @@ public class DoorInteraction : MonoBehaviour
         // Only open when inside trigger and click left mouse
         if (canOpen && Input.GetMouseButtonDown(0))
         {
+            interactionUI.SetActive(false); // Interaction UI Text to disappear after opening the door.
             StartCoroutine(ToggleDoor());
         }
     }
@@ -36,12 +38,14 @@ public class DoorInteraction : MonoBehaviour
     {
         if (other.CompareTag("Player"))
             canOpen = true;
+        interactionUI.SetActive(true);
     }
 
     void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
             canOpen = false;
+        interactionUI.SetActive(false);
     }
 
     IEnumerator ToggleDoor()
