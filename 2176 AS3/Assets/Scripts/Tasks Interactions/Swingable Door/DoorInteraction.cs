@@ -11,23 +11,37 @@ public class DoorInteraction : MonoBehaviour
     private Quaternion _openRotationForward;
     private Quaternion _openRotationBackward;
 
-    public Transform player; // assign in Inspector
+    public Transform player;         // assign in Inspector
+
+    private bool canOpen = false;   // This is only true when player is inside trigger
 
     void Start()
     {
         _closedRotation = transform.rotation;
 
-        // Two possible open directions:
         _openRotationForward = Quaternion.Euler(transform.eulerAngles + new Vector3(0, openAngle, 0));
         _openRotationBackward = Quaternion.Euler(transform.eulerAngles + new Vector3(0, -openAngle, 0));
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        // Only open when inside trigger and click left mouse
+        if (canOpen && Input.GetMouseButtonDown(0))
         {
             StartCoroutine(ToggleDoor());
         }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+            canOpen = true;
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+            canOpen = false;
     }
 
     IEnumerator ToggleDoor()
@@ -38,14 +52,12 @@ public class DoorInteraction : MonoBehaviour
 
         if (isOpen)
         {
-            // Determine which side the player is on to prevent the door from slamming the player LOL
             Vector3 toPlayer = (player.position - transform.position).normalized;
             float dot = Vector3.Dot(transform.forward, toPlayer);
 
             targetRot = (dot > 0) ? _openRotationBackward : _openRotationForward;
         }
 
-        // Smooth rotation using RotateTowards (never stops early, does a full open and close)
         while (Quaternion.Angle(transform.rotation, targetRot) > 0.01f)
         {
             transform.rotation = Quaternion.RotateTowards(
@@ -56,6 +68,7 @@ public class DoorInteraction : MonoBehaviour
             yield return null;
         }
 
-        transform.rotation = targetRot; // Snap to exact target rotation
+        transform.rotation = targetRot;
     }
 }
+
