@@ -38,7 +38,7 @@ public class DoorInteraction : MonoBehaviour
 
         if (isOpen)
         {
-            // Determine which side the player is on to prevent the door from slamming the player LMAO
+            // Determine which side the player is on to prevent the door from slamming the player LOL
             Vector3 toPlayer = (player.position - transform.position).normalized;
             float dot = Vector3.Dot(transform.forward, toPlayer);
 
