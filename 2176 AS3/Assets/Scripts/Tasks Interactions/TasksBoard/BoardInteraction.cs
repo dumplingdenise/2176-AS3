@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class BoardInteraction : MonoBehaviour
 {
-    public GameObject taskUI;        // UI Panel
+    public GameObject taskUI;
+    public GameObject interactionText; // NEW
     public float interactDistance = 3f;
     public Transform player;
 
@@ -12,12 +13,23 @@ public class BoardInteraction : MonoBehaviour
     {
         float distance = Vector3.Distance(player.position, transform.position);
 
-        if (distance <= interactDistance && Input.GetKeyDown(KeyCode.E))        // Trigger key 'E' to interact to see the Tasks on the Task UI Board.
+        // Show interaction text when close enough
+        if (distance <= interactDistance && !isOpen)
         {
-            ToggleTaskUI();
+            interactionText.SetActive(true);
+
+            if (Input.GetKeyDown(KeyCode.E))        // Opens / Interacts with the Task Board by trigger 'E' key
+            {
+                ToggleTaskUI();
+            }
+        }
+        else
+        {
+            interactionText.SetActive(false);
         }
 
-        if (isOpen && Input.GetKeyDown(KeyCode.Escape))         // Trigger 'Esc' key to exit the Task UI Board.
+        // Close UI
+        if (isOpen && Input.GetKeyDown(KeyCode.Escape))     // Closes the Task Board by trigger 'Esc' key
         {
             ToggleTaskUI();
         }
@@ -28,9 +40,9 @@ public class BoardInteraction : MonoBehaviour
         isOpen = !isOpen;
         taskUI.SetActive(isOpen);
 
-        // Lock player movement and cursor
         Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = isOpen;
     }
 }
+
 
