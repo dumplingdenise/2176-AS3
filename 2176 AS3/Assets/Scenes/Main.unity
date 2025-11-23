@@ -3617,6 +3617,7 @@ MonoBehaviour:
   gameManager: {fileID: 1584427519}
   isTimed: 1
   lightDuration: 10
+  cooldownDuration: 3
 --- !u!65 &290084924
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6387,6 +6388,7 @@ MonoBehaviour:
   gameManager: {fileID: 1584427519}
   isTimed: 1
   lightDuration: 10
+  cooldownDuration: 3
 --- !u!65 &405652060
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12915,7 +12917,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &694674328
 Transform:
   m_ObjectHideFlags: 0
@@ -16527,6 +16529,7 @@ MonoBehaviour:
   gameManager: {fileID: 1584427519}
   isTimed: 1
   lightDuration: 10
+  cooldownDuration: 3
 --- !u!65 &925336801
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -18466,13 +18469,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1025909339}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: 0, y: 6.95, z: -7.26}
+  m_LocalRotation: {x: 0.030153697, y: -0.96984637, z: 0.17101005, w: 0.17101015}
+  m_LocalPosition: {x: 1.585, y: 3.15, z: 2.537}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1401277401}
-  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 20, y: -160, z: 0}
 --- !u!1 &1027760765
 GameObject:
   m_ObjectHideFlags: 0
@@ -21554,7 +21557,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: c1914b38bdeb85f4483622102aa73f25, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -21601,6 +21604,7 @@ MonoBehaviour:
   gameManager: {fileID: 1584427519}
   isTimed: 1
   lightDuration: 10
+  cooldownDuration: 3
 --- !u!65 &1195755251
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -30843,6 +30847,7 @@ Transform:
   m_Children:
   - {fileID: 1633704957}
   - {fileID: 1025909340}
+  - {fileID: 1466959856}
   m_Father: {fileID: 2126089522}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1406023486
@@ -32195,6 +32200,37 @@ Transform:
   - {fileID: 1921145939}
   m_Father: {fileID: 77906062}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1466959855
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1466959856}
+  m_Layer: 0
+  m_Name: FixedCamTargetC
+  m_TagString: Untagged
+  m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1466959856
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1466959855}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.17364816, y: 0, z: 0, w: 0.9848078}
+  m_LocalPosition: {x: 0.91, y: 3.65, z: -2.21}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1401277401}
+  m_LocalEulerAnglesHint: {x: 20, y: 0, z: 0}
 --- !u!1001 &1470555836
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -34087,6 +34123,7 @@ MonoBehaviour:
   gameManager: {fileID: 1584427519}
   isTimed: 1
   lightDuration: 10
+  cooldownDuration: 3
 --- !u!65 &1541782154
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -36263,13 +36300,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1633704956}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.15304591, y: 0.6903456, z: -0.15304591, w: 0.6903456}
-  m_LocalPosition: {x: -9.49, y: 6.28, z: 0}
+  m_LocalRotation: {x: 0.0560187, y: 0.9430295, z: -0.20906459, w: 0.25268406}
+  m_LocalPosition: {x: -4.94, y: 2.84, z: 2.86}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1401277401}
-  m_LocalEulerAnglesHint: {x: 25, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 25, y: 150, z: 0}
 --- !u!1 &1638750210
 GameObject:
   m_ObjectHideFlags: 0
@@ -36739,6 +36776,7 @@ MonoBehaviour:
   gameManager: {fileID: 1584427519}
   isTimed: 1
   lightDuration: 10
+  cooldownDuration: 3
 --- !u!65 &1654801941
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -41912,6 +41950,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: box_stacked
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d1098f8f519ee0046b412fbac249ccf5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -42374,6 +42416,7 @@ MonoBehaviour:
   gameManager: {fileID: 1584427519}
   isTimed: 1
   lightDuration: 10
+  cooldownDuration: 3
 --- !u!65 &1936980915
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -45743,7 +45786,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2126089522}
-  - component: {fileID: 2126089521}
   - component: {fileID: 2126089520}
   m_Layer: 8
   m_Name: FixedCameraZone
@@ -45751,7 +45793,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2126089520
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45767,27 +45809,9 @@ MonoBehaviour:
   cameraTargets:
   - {fileID: 1633704957}
   - {fileID: 1025909340}
---- !u!65 &2126089521
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2126089519}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 15.712141, y: 0.50697947, z: 7.241802}
-  m_Center: {x: 0.7810602, y: 0.10087037, z: -3.5160694}
+  - {fileID: 1466959856}
+  zoneHalfExtents: {x: 4, y: 2, z: 3}
+  playerTag: Player
 --- !u!4 &2126089522
 Transform:
   m_ObjectHideFlags: 0
@@ -45797,7 +45821,7 @@ Transform:
   m_GameObject: {fileID: 2126089519}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.13, y: 1, z: -4.21}
+  m_LocalPosition: {x: 11.28, y: 1, z: -21.97}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
