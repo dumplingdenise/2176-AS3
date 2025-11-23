@@ -77,11 +77,17 @@ public class PlayerMovement : MonoBehaviour
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
-        Vector3 camForward = Vector3.Scale(cameraTransform.forward, new Vector3(1, 0, 1)).normalized;
-        Vector3 camRight = cameraTransform.right;
-        Vector3 move = (camForward * vertical + camRight * horizontal).normalized;
-
-        controller.Move(move * playerSpeed * Time.deltaTime);
+        Vector3 move;
+        if (CameraControl.Instance != null && CameraControl.Instance.IsInFixedCamera)
+        {
+            move = new Vector3(horizontal, 0, vertical).normalized;
+        }
+        else
+        {
+            Vector3 camForward = Vector3.Scale(cameraTransform.forward, new Vector3(1, 0, 1)).normalized;
+            Vector3 camRight = cameraTransform.right;
+            move = (camForward * vertical + camRight * horizontal).normalized;
+        }
 
         if (move.magnitude > 0.1f)
         {
@@ -96,7 +102,10 @@ public class PlayerMovement : MonoBehaviour
         }
 
         playerVelocity.y += gravityValue * Time.deltaTime;
-        controller.Move(playerVelocity * Time.deltaTime);
+        Vector3 finalMove = (move * playerSpeed);
+        finalMove.y = playerVelocity.y;
+
+        controller.Move(finalMove * Time.deltaTime);
     }
     void HandleAnimation()
     {

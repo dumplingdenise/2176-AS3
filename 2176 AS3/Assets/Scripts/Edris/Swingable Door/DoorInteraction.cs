@@ -20,11 +20,6 @@ public class DoorInteraction : MonoBehaviour
     [Header("Interaction UI(s)")]
     public GameObject[] interactionUIs; // Array for front and back UI texts
 
-    [Header("Audio (Optional)")]
-    public AudioSource doorAudio;    // Optional audio source
-    public AudioClip openClip;       // Sound when door opens
-    public AudioClip closeClip;      // Sound when door closes
-
     private bool canOpen = false; // True if player is inside the trigger
 
     void Start()
@@ -118,9 +113,11 @@ public class DoorInteraction : MonoBehaviour
             targetRot = (dot > 0) ? _openRotationBackward : _openRotationForward;
         }
 
-        // Play door sound if available
-        if (doorAudio != null)
-            doorAudio.PlayOneShot(isOpen ? openClip : closeClip);
+        // AUDIO
+        if (!GameManager.isSceneTransitioning)
+        {
+            AudioManager.instance.PlaySound(isOpen ? "DoorOpen" : "DoorClose");
+        }
 
         // Smooth rotation over time
         while (Quaternion.Angle(transform.rotation, targetRot) > 0.01f)
