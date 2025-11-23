@@ -25,6 +25,12 @@ public class PlayerHealth : MonoBehaviour
 
         Debug.Log("Player took damage. Current Health: " + currentHealth);
 
+        // play hurt SFX
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.PlaySound("Hurt");
+        }
+
         // Tell the UI to update the hearts display
         if (uiManager != null)
         {
