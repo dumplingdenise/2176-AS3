@@ -11490,6 +11490,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boxRb: {fileID: 123702297}
+  isPlayerNear: 0
+  isUnlocked: 0
 --- !u!65 &615935565
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -13203,7 +13205,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &694674328
 Transform:
   m_ObjectHideFlags: 0
@@ -16166,6 +16168,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boxRb: {fileID: 1506532858}
+  isPlayerNear: 0
+  isUnlocked: 0
 --- !u!65 &894355148
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -17809,6 +17813,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boxRb: {fileID: 2064246103}
+  isPlayerNear: 0
+  isUnlocked: 0
 --- !u!65 &951215232
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -21354,6 +21360,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boxRb: {fileID: 1770319884}
+  isPlayerNear: 0
+  isUnlocked: 0
 --- !u!65 &1119798686
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -25237,6 +25245,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boxRb: {fileID: 1423549690}
+  isPlayerNear: 0
+  isUnlocked: 0
 --- !u!65 &1328202045
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -25306,6 +25316,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boxRb: {fileID: 1444394795}
+  isPlayerNear: 0
+  isUnlocked: 0
 --- !u!65 &1328389369
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -43651,6 +43663,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boxRb: {fileID: 1089168822}
+  isPlayerNear: 0
+  isUnlocked: 0
 --- !u!65 &1951265971
 BoxCollider:
   m_ObjectHideFlags: 0
