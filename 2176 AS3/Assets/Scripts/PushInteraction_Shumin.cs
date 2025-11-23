@@ -2,42 +2,49 @@ using UnityEngine;
 
 public class PushInteraction_Shumin : MonoBehaviour
 {
-    // box to unlock
-    public Rigidbody rb;
-    private bool isplayerNear = false;
+    [Header("Box to push")]
+    [Tooltip("Rigidbody on the pushable box (the one with the solid collider).")]
+    public Rigidbody boxRb;               // drag the box Rigidbody here
 
-    public GameObject interactionUI;
+    [Header("Settings")]
+    [Tooltip("If true, the box starts locked (not pushable) until E is pressed.")]
+    public bool startsLocked = true;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private bool playerInRange = false;
+    private bool isPushable = false;
+
+    private void Start()
     {
-        rb.isKinematic = true;
-
-        // UI starts hidden
-        if (interactionUI != null)
+        if (boxRb == null)
         {
-            interactionUI.SetActive(false);
+            Debug.LogError("PushInteraction_Shumin: boxRb is not assigned!");
+            return;
+        }
+
+        if (startsLocked)
+        {
+            boxRb.isKinematic = true;     // not pushable at start
+            isPushable = false;
+        }
+        else
+        {
+            boxRb.isKinematic = false;    // immediately pushable
+            isPushable = true;
         }
     }
 
-    // Update is called once per frame
     private void Update()
     {
-        if (!isplayerNear) return;
+        if (!playerInRange || boxRb == null)
+            return;
 
+        // Press E to toggle pushable / not pushable while near
         if (Input.GetKeyDown(KeyCode.E))
         {
-            // unlock box so it can be pushed
-            if (rb != null)
-            {
-                rb.isKinematic = false;
-            }
+            isPushable = !isPushable;
+            boxRb.isKinematic = !isPushable;
 
-            // hide UI once they start pushing
-            if (interactionUI != null)
-            {
-                interactionUI.SetActive(false);
-            }
+            Debug.Log("PushInteraction: box pushable = " + isPushable);
         }
     }
 
@@ -45,31 +52,25 @@ public class PushInteraction_Shumin : MonoBehaviour
     {
         if (!other.CompareTag("Player")) return;
 
-        isplayerNear = true;
-
-        // show UI when player is in the zone
-        if (interactionUI != null)
-        {
-            interactionUI.SetActive(true);
-        }
+        playerInRange = true;
+        Debug.Log("PushInteraction: player entered push area.");
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (!other.CompareTag("Player")) return;
 
-        isplayerNear = false;
+        playerInRange = false;
 
-        // lock the box again when player leaves
-        if (rb != null)
+        // When player leaves, always lock the box again
+        if (boxRb != null)
         {
-            rb.isKinematic = true;
+            isPushable = false;
+            boxRb.isKinematic = true;
+            boxRb.linearVelocity = Vector3.zero;        // stop sliding
+            boxRb.angularVelocity = Vector3.zero; // stop spinning
         }
 
-        // hide UI when they walk away
-        if (interactionUI != null)
-        {
-            interactionUI.SetActive(false);
-        }
+        Debug.Log("PushInteraction: player left, box locked again.");
     }
 }
