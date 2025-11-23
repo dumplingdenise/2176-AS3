@@ -1,20 +1,35 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public float maxHealth = 100f;
-    public float currentHealth;
+    public int maxHealth = 3;
+    public int currentHealth;
+
     public UIManager uiManager;
 
     void Start()
     {
         currentHealth = maxHealth;
+        // Tell the UI to set the starting hearts correctly
+        if (uiManager != null)
+        {
+            uiManager.UpdateHealthUI(currentHealth);
+        }
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(int damage)
     {
         currentHealth -= damage;
-        Debug.Log("Player took " + damage + " damage. Current Health: " + currentHealth);
+        if (currentHealth < 0) currentHealth = 0;
+
+        Debug.Log("Player took damage. Current Health: " + currentHealth);
+
+        // Tell the UI to update the hearts display
+        if (uiManager != null)
+        {
+            uiManager.UpdateHealthUI(currentHealth);
+        }
 
         if (currentHealth <= 0)
         {
@@ -26,10 +41,8 @@ public class PlayerHealth : MonoBehaviour
     {
         Debug.Log("Player has been defeated!");
 
-        // Disable player movement
         GetComponent<PlayerMovement>().enabled = false;
 
-        // Call the UIManager to show the game over screen
         if (uiManager != null)
         {
             uiManager.ShowGameOverScreen();

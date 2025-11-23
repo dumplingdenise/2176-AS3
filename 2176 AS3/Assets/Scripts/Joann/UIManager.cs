@@ -1,12 +1,27 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
     [Header("UI Panels")]
     public GameObject pauseMenuUI;
     public GameObject gameOverPanel;
+    public GameObject hudPanel;
+
+    [Header("HUD Elements")]
+    public Image[] hearts; // An array to hold our heart images
+    public Slider escapeProgressBar;
+    public Sprite fullHeart;
+    public Sprite emptyHeart;
+
+    [Header("Timer Elements")]
+    public TextMeshProUGUI timerText;
+    private bool isTimerActive = false;
+    private float timerValue = 0f;
+    private LightInteraction currentTimedLight;
 
     [Header("UI Dependencies")]
     public GameObject taskBoardUI; // From your old PauseManager
@@ -39,8 +54,10 @@ public class UIManager : MonoBehaviour
         }
 
         // Ensure all UI panels are hidden at the start
+        if (hudPanel != null) hudPanel.SetActive(true);
         if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
+        if (timerText != null) timerText.gameObject.SetActive(false);
 
         // Start with the game running
         Time.timeScale = 1f;
@@ -73,6 +90,11 @@ public class UIManager : MonoBehaviour
                 PauseGame();
             }
         }
+
+        if (isTimerActive)
+        {
+            HandleTimerCountdown();
+        }
     }
 
     // --- PAUSE & RESUME LOGIC ---
@@ -103,6 +125,7 @@ public class UIManager : MonoBehaviour
 
     public void ShowGameOverScreen()
     {
+        if (hudPanel != null) hudPanel.SetActive(false);
         if (gameOverPanel != null) gameOverPanel.SetActive(true);
 
         Time.timeScale = 0f;
@@ -114,6 +137,63 @@ public class UIManager : MonoBehaviour
         Cursor.visible = true;
 
         if (AudioManager.instance != null) AudioManager.instance.SetWalkingState(false);
+    }
+
+    // --- HUD FUNCTIONS ---
+    public void UpdateHealthUI(int currentHealth)
+    {
+        for (int i = 0; i < hearts.Length; i++)
+        {
+            if (i < currentHealth)
+            {
+                hearts[i].sprite = fullHeart;
+            }
+            else
+            {
+                hearts[i].sprite = emptyHeart;
+            }
+        }
+    }
+
+    public void UpdateProgressBar(int completed, int total)
+    {
+        if (escapeProgressBar != null)
+        {
+            // The slider value goes from 0 to 1, so we divide
+            escapeProgressBar.value = (float)completed / total;
+        }
+    }
+
+    // --- TIMER FUNCTIONS ---
+    public void StartLightTimer(float duration, LightInteraction lightToTrack)
+    {
+        timerValue = duration;
+        currentTimedLight = lightToTrack;
+        isTimerActive = true;
+        if (timerText != null) timerText.gameObject.SetActive(true);
+    }
+
+    private void HandleTimerCountdown()
+    {
+        timerValue -= Time.deltaTime;
+        if (timerText != null)
+        {
+            timerText.text = $"Time Remaining: {Mathf.Ceil(timerValue)}s";
+        }
+
+        if (timerValue <= 0)
+        {
+            isTimerActive = false;
+            if (timerText != null) timerText.gameObject.SetActive(false);
+
+            // Tell the light to turn off
+            if (currentTimedLight != null)
+            {
+                currentTimedLight.TurnOffLight();
+            }
+
+            Debug.Log("Light timer finished!");
+        }
     }
 
     // --- SHARED BUTTON FUNCTIONS ---
