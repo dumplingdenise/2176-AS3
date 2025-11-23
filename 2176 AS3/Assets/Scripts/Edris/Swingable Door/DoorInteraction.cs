@@ -22,6 +22,8 @@ public class DoorInteraction : MonoBehaviour
 
     private bool canOpen = false; // True if player is inside the trigger
 
+    public GameManager gameManager;
+
     void Start()
     {
 
@@ -117,6 +119,12 @@ public class DoorInteraction : MonoBehaviour
         if (!GameManager.isSceneTransitioning)
         {
             AudioManager.instance.PlaySound(isOpen ? "DoorOpen" : "DoorClose");
+        }
+
+        // INTERACTION TRACKING - only try to complete task when door is opening
+        if (isOpen && gameManager != null)
+        {
+            gameManager.TryCompleteTask(this.gameObject);
         }
 
         // Smooth rotation over time
