@@ -73,17 +73,18 @@ The game ends and displays a Game Over screen if:
 
 **Denise Teo:**
   
-1. Player Movement
+**1. Player Movement**
 
 Description: 
 Implemented basic Player Movement to move and jump with Animation. The player can move freely in 3D space using WASD controls. Movement direction is always based on camera orientation(Example: Pressing W moves the player forward relative to where the active camera is facing). The player uses a CharacterController, preventing diagonal speed boost and ensure smooth collision with floors and walls.
 
 Features implemented:
--Camera-relative WASD movement
-Proper gravity, falling & grounded checks
--No diagonal speed increase
--Uses Unity’s CharacterController for reliable collision
--Works across all camera modes (1st person, 3rd person, fixed)
+
+- Camera-relative WASD movement
+- Proper gravity, falling & grounded checks
+- No diagonal speed increase
+- Uses Unity’s CharacterController for reliable collision
+- Works across all camera modes (1st person, 3rd person, fixed)
 
 How to Trigger:
 
@@ -93,7 +94,7 @@ How to Trigger:
 Scripts:
 PlayerMovement.cs
 
-2. 3D Camera
+**2. 3D Camera**
 
 Description:
 Implemented First Person, Third Person and Fixed Angle Camera view. Players can toggle between Third-Person and First-Person outside of Fixed Angle Zone. Within the Fixed Angle Zone, players can only toggle between the Fixed-Angle cameras in it. Both FP and TP cameras include camera collision detection to prevent clipping through walls or rotating the camera outside the environment.
@@ -115,11 +116,9 @@ How to Trigger:
 - Camera collision prevention is automatic during movement and rotation.
 
 Scripts:
-CameraControl.cs
-CameraPivot.cs
-FixedCameraZone.cs
+CameraControl.cs, CameraPivot.cs, FixedCameraZone.cs
 
-3. Light Interaction
+**3. Light Interaction**
 
 Description:
 The player can interact with lanterns on the ceiling using a raycast=based interaction system. When the player looks at the light while within range, and facing the correct angle, and interaction prompt on the lantern appears. When the player presses E, the light toggles ON, and interaction is disabled. After the light timer ends, the light turns OFF and enters a cooldown period.
@@ -138,9 +137,7 @@ How to Trigger:
 - Cooldown ends: Interaction is re-enabled
 
 Scripts:
-LookInteraction.cs
-LightInteraction.cs
-LightGameTimer.cs
+LookInteraction.cs, LightInteraction.cs, LightGameTimer.cs
 
 ------------------------------------------
 
@@ -178,10 +175,7 @@ Description:
 Implemented a locked exit door that cannot be opened until the player has collected the required key. Before the key is obtained, interacting with the door displays a “Door is Locked” message. After the key is collected, the door can be opened normally, allowing the player to finish the level.
 
 Scripts:
-LockedDoorInteraction.cs
-KeyPickUp.cs
-EndTrigger.cs
-UIManager.cs
+LockedDoorInteraction.cs, KeyPickUp.cs, EndTrigger.cs, UIManager.cs
 
 How To Trigger:
 
