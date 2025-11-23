@@ -17,6 +17,9 @@ public class LightInteraction : MonoBehaviour
     public bool isTimed = true;
     public float lightDuration = 10f;
 
+    [Header("Cooldown swtting")]
+    public float cooldownDuration = 3f;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -54,6 +57,8 @@ public class LightInteraction : MonoBehaviour
     {
         if (activated) return;
 
+        Debug.Log("ToggleLight(): activated before press = " + activated);
+
         // AUDIO
         if (AudioManager.instance != null)
         {
@@ -63,6 +68,7 @@ public class LightInteraction : MonoBehaviour
         light.enabled = true;
         activated = true;
         lightText.enabled = false;
+
 
         // INTERACTION TRACKING
         if (gameManager != null) gameManager.TryCompleteTask(this.gameObject);
@@ -79,6 +85,15 @@ public class LightInteraction : MonoBehaviour
         {
             light.enabled = false;
         }
+    }
+
+    public void ResetLight()
+    {
+        activated = false;
+        light.enabled = false;
+        lightText.enabled = false;
+
+        Debug.Log("ResetLight(): activated = " + activated);
     }
 
     public bool CanInteract => !activated && lightText.enabled;

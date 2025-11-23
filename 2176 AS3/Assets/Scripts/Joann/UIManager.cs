@@ -192,11 +192,32 @@ public class UIManager : MonoBehaviour
             // Tell the light to turn off
             if (currentTimedLight != null)
             {
-                currentTimedLight.TurnOffLight();
+                currentTimedLight.ResetLight();
+                StartCoroutine(StartCooldown(currentTimedLight));
             }
 
             Debug.Log("Light timer finished!");
         }
+    }
+
+    // ---------- Cooldown Timer --------------
+    private IEnumerator StartCooldown(LightInteraction light)
+    {
+        float cd = light.cooldownDuration;
+
+        // Show cooldown UI
+        timerText.gameObject.SetActive(true);
+
+        while (cd > 0)
+        {
+            cd -= Time.deltaTime;
+            timerText.text = $"Cooldown: {Mathf.Ceil(cd)}s";
+            yield return null;
+        }
+
+        // Cooldown finished, hide UI and allow light interaction again
+        timerText.gameObject.SetActive(false);
+        light.lightText.enabled = true; // show "Press E" again
     }
 
     // --- VICTORY FUNCTIONS ---
