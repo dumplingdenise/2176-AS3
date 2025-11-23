@@ -3,8 +3,14 @@ using UnityEngine;
 public class CameraPivot : MonoBehaviour
 {
     public float sensitivity = 2f;
-    public float minY = -30f;
-    public float maxY = 60f;
+    /*public float minY = -30f;
+    public float maxY = 60f;*/
+
+    public float fpMinY = -85f;
+    public float fpMaxY = 85f;
+
+    public float tpMinY = -30f;
+    public float tpMaxY = 60f;
 
     float yaw;
     float pitch;
@@ -28,7 +34,15 @@ public class CameraPivot : MonoBehaviour
        
         yaw += Input.GetAxis("Mouse X") * sensitivity;
         pitch -= Input.GetAxis("Mouse Y") * sensitivity;
-        pitch = Mathf.Clamp(pitch, minY, maxY);
+        /*pitch = Mathf.Clamp(pitch, minY, maxY);*/
+        if (CameraControl.Instance.isFirstPerson)   // whatever your boolean is
+        {
+            pitch = Mathf.Clamp(pitch, fpMinY, fpMaxY);
+        }
+        else
+        {
+            pitch = Mathf.Clamp(pitch, tpMinY, tpMaxY);
+        }
 
         transform.rotation = Quaternion.Euler(pitch, yaw, 0);
     }

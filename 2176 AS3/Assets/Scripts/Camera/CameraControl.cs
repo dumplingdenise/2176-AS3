@@ -16,7 +16,7 @@ public class CameraControl : MonoBehaviour
     public MeshRenderer hatMesh;
 
     private Transform currentTarget;
-    private bool isFirstPerson = false;
+    public bool isFirstPerson = false;
 
     // For camera collision
     public LayerMask cameraCollisionMask;  

@@ -8,6 +8,10 @@ public class LookInteraction : MonoBehaviour
     public Transform pivot;
 
     private LightInteraction currentTarget;
+
+    public Transform player;
+    public float requiredFacingAngle = 60f;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -37,6 +41,22 @@ public class LookInteraction : MonoBehaviour
 
             if (interactable != null)
             {
+                Vector3 toTarget = interactable.transform.position - player.position;
+                toTarget.y = 0; // ignore vertical angle
+
+                float angle = Vector3.Angle(player.forward, toTarget);
+
+                if (angle > requiredFacingAngle)
+                {
+                    // Player is NOT facing the object
+                    if (currentTarget != null)
+                    {
+                        currentTarget.HideText();
+                        currentTarget = null;
+                    }
+                    return;
+                }
+
                 if (currentTarget != interactable)
                 {
                     if (currentTarget != null)
