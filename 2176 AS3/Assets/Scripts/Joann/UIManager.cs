@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
     public GameObject pauseMenuUI;
     public GameObject gameOverPanel;
     public GameObject hudPanel;
+    public GameObject victoryPanel;
 
     [Header("HUD Elements")]
     public Image[] hearts; // An array to hold our heart images
@@ -58,6 +59,7 @@ public class UIManager : MonoBehaviour
         if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
         if (timerText != null) timerText.gameObject.SetActive(false);
+        if (victoryPanel != null) victoryPanel.SetActive(false);
 
         // Start with the game running
         Time.timeScale = 1f;
@@ -125,6 +127,7 @@ public class UIManager : MonoBehaviour
 
     public void ShowGameOverScreen()
     {
+        if (hudPanel != null) hudPanel.SetActive(false);
         if (hudPanel != null) hudPanel.SetActive(false);
         if (gameOverPanel != null) gameOverPanel.SetActive(true);
 
@@ -194,6 +197,26 @@ public class UIManager : MonoBehaviour
 
             Debug.Log("Light timer finished!");
         }
+    }
+
+    // --- VICTORY FUNCTIONS ---
+    public void ShowVictoryScreen()
+    {
+        // Hide all other UI
+        if (hudPanel != null) hudPanel.SetActive(false);
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+
+        // Show the victory panel
+        if (victoryPanel != null) victoryPanel.SetActive(true);
+
+        // Stop the game and play the sound
+        Time.timeScale = 0f;
+        if (AudioManager.instance != null) AudioManager.instance.PlaySound("Victory");
+
+        // Unlock the cursor so the player can click buttons
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     // --- SHARED BUTTON FUNCTIONS ---

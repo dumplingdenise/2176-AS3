@@ -6,6 +6,7 @@ public class BoardInteraction : MonoBehaviour
     public GameObject interactionText; // NEW
     public float interactDistance = 3f;
     public Transform player;
+    public GameManager gameManager;
 
     private bool isOpen = false;
 
@@ -42,6 +43,12 @@ public class BoardInteraction : MonoBehaviour
 
         Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = isOpen;
+
+        // INTERACTION TRACKING - only try to complete task 1st time board is open
+        if (isOpen && gameManager != null)
+        {
+            gameManager.TryCompleteTask(this.gameObject);
+        }
     }
 }
 

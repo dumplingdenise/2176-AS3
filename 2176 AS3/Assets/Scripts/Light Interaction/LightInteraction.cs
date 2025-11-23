@@ -64,11 +64,11 @@ public class LightInteraction : MonoBehaviour
         activated = true;
         lightText.enabled = false;
 
-        // tell game manager and ui manager
-        if (gameManager != null) gameManager.CompleteTask();
+        // INTERACTION TRACKING
+        if (gameManager != null) gameManager.TryCompleteTask(this.gameObject);
         if (uiManager != null && isTimed)
         {
-            uiManager.StartLightTimer(lightDuration, this); // 'this' passes a reference to this script
+            uiManager.StartLightTimer(lightDuration, this);
         }
     }
 
