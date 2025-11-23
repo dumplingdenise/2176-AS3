@@ -7,12 +7,16 @@ public class EnemyAI : MonoBehaviour
 
     public Transform player;
 
-    public LayerMask whatIsGround, whatIsPlayer;
+    public LayerMask whatIsGround, whatIsPlayer, whatIsWall;
 
     // patrolling
     public Vector3 walkPoint;
     bool walkPointSet;
     public float walkPointRange;
+
+    [Header("Patrolling")]
+    public Transform[] patrolPoints;
+    private int currentPatrolIndex = 0;
 
     // attacking
     public float timeBetweenAttacks;
@@ -28,11 +32,16 @@ public class EnemyAI : MonoBehaviour
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
     }
+    private void Start()
+    {
+        // Start patrolling towards the first point
+        GoToNextPatrolPoint();
+    }
 
     private void Update()
     {
-        // check for sight & attack range
-        playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
+        playerInSightRange = CanSeePlayer();
+
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
 
         if (!playerInSightRange && !playerInAttackRange) Patrolling();
@@ -40,35 +49,52 @@ public class EnemyAI : MonoBehaviour
         if (playerInSightRange && playerInAttackRange) AttackPlayer();
     }
 
+    private bool CanSeePlayer()
+    {
+        // First, check if the player is even within the sight radius sphere.
+        if (Physics.CheckSphere(transform.position, sightRange, whatIsPlayer))
+        {
+            // If they are, then perform a line-of-sight check.
+            Vector3 directionToPlayer = (player.position - transform.position).normalized;
+            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+            // Shoot a ray from the enemy towards the player.
+            // If the ray hits a wall before it hits the player, then the enemy can't see the player.
+            if (!Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, whatIsWall))
+            {
+                // The raycast did NOT hit a wall, so the enemy can see the player.
+                return true;
+            }
+        }
+
+        // If either the sphere check or the raycast check fails, the enemy cannot see the player.
+        return false;
+    }
+
     private void Patrolling()
     {
-        if (!walkPointSet) SearchWalkPoint();
-
-        if (walkPointSet)
-            agent.SetDestination(walkPoint);
-
-        Vector3 distanceToWalkPoint = transform.position - walkPoint;
-
-        // walkpoint reached
-        if (distanceToWalkPoint.magnitude < 1f)
+        // If the agent is not busy and has reached its destination...
+        if (!agent.pathPending && agent.remainingDistance < 0.5f)
         {
-            walkPointSet = false;
+            // ...go to the next point.
+            GoToNextPatrolPoint();
         }
     }
-
-    private void SearchWalkPoint()
+    void GoToNextPatrolPoint()
     {
-        // calculate random point in range
-        float randomZ = Random.Range(-walkPointRange, walkPointRange);
-        float randomX = Random.Range(-walkPointRange, walkPointRange);
-
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
-
-        if (Physics.Raycast(walkPoint, -transform.up, 2f, whatIsGround))
+        if (patrolPoints.Length == 0)
         {
-            walkPointSet = true;
+            Debug.LogError("Patrol points array is empty! Assign points in the Inspector.", this.gameObject);
+            return;
         }
+
+        agent.SetDestination(patrolPoints[currentPatrolIndex].position);
+
+        Debug.Log("Enemy heading to patrol point: " + patrolPoints[currentPatrolIndex].name);
+
+        currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
     }
+
     private void ChasePlayer()
     {
         agent.SetDestination(player.position);
