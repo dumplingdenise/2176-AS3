@@ -76,14 +76,14 @@ The game ends and displays a Game Over screen if:
 **1. Player Movement**
 
 Description: 
-Implemented basic Player Movement to move and jump with Animation. The player can move freely in 3D space using WASD controls. Movement direction is always based on camera orientation(Example: Pressing W moves the player forward relative to where the active camera is facing). The player uses a CharacterController, preventing diagonal speed boost and ensure smooth collision with floors and walls.
+Implemented basic Player Movement to move and jump with Animation. The player can move freely in 3D space using WASD controls. Movement direction is always based on camera orientation(Example: Pressing W moves the player forward relative to where the active camera is facing). The player uses a CharacterController, preventing diagonal speed boost and ensure collision with floors and walls.
 
 Features implemented:
 
 - Camera-relative WASD movement
 - Proper gravity, falling & grounded checks
 - No diagonal speed increase
-- Uses Unity’s CharacterController for reliable collision
+- Uses Unity’s CharacterController for collision
 - Works across all camera modes (1st person, 3rd person, fixed)
 
 How to Trigger:
