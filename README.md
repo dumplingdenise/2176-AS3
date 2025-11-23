@@ -53,7 +53,7 @@ The game ends and displays a Game Over screen if:
 - Player HP reaches 0 after being hit by the enemy.
 - The countdown timer reaches 0 before escaping.
 
-----------
+
 <ins>Tasks Attempted:</ins>
 
 **Denise Teo:**
@@ -73,6 +73,7 @@ LookInteraction.cs
 LightInteraction.cs
 LightGameTimer.cs
 
+------------------------------------------
 
 **Edris Foo:**
 
@@ -133,9 +134,12 @@ How to Trigger:
 1. Player opens the exit door (victory), or
 2. Timer reaches zero and triggers Game Over
 
+------------------------------------------
 
 **Joann Bisseling:**
 1. 
+
+------------------------------------------
 
 **Teo Shumin:**
 1.
