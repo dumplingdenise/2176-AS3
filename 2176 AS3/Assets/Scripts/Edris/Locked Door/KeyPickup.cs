@@ -12,22 +12,34 @@ public class KeyPickup : MonoBehaviour
     {
         if (keyUI != null)
             keyUI.SetActive(false); // Hide key UI at start
+        else
+            Debug.LogWarning("KeyPickup: keyUI is not assigned!");
+
+        if (interactionUI == null)
+            Debug.LogWarning("KeyPickup: interactionUI is not assigned!");
     }
 
     void Update()
     {
-        if (canPickUp && Input.GetKeyDown(KeyCode.E))
+        if (!canPickUp) return;
+
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            // AUDIO 
-            AudioManager.instance.PlaySound("KeyPickup");
+            // AUDIO (safe check)
+            if (AudioManager.instance != null)
+                AudioManager.instance.PlaySound("KeyPickup");
+            else
+                Debug.LogWarning("KeyPickup: AudioManager instance is missing!");
 
             playerHasKey = true;
-            interactionUI.SetActive(false);
+
+            if (interactionUI != null)
+                interactionUI.SetActive(false);
 
             if (keyUI != null)
-                keyUI.SetActive(true); // Show key UI on pickup
+                keyUI.SetActive(true);
 
-            Destroy(gameObject);  // Remove key from scene
+            Destroy(gameObject);
         }
     }
 
@@ -36,7 +48,12 @@ public class KeyPickup : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             canPickUp = true;
-            interactionUI.SetActive(true);
+
+            if (interactionUI != null)
+                interactionUI.SetActive(true);
+            else
+                Debug.LogWarning("KeyPickup: interactionUI is not assigned!");
+
             Debug.Log("Player touched key");
         }
     }
@@ -46,7 +63,10 @@ public class KeyPickup : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             canPickUp = false;
-            interactionUI.SetActive(false);
+
+            if (interactionUI != null)
+                interactionUI.SetActive(false);
         }
     }
 }
+

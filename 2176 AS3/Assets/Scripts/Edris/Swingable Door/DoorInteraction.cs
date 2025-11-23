@@ -24,7 +24,7 @@ public class DoorInteraction : MonoBehaviour
 
     void Start()
     {
-
+        // WARNINGS
         if (player == null) Debug.LogWarning("Player reference is missing!");
         if (interactionUIs == null || interactionUIs.Length < 2)
             Debug.LogWarning("Please assign front and back UI texts to interactionUIs array!");
@@ -41,17 +41,19 @@ public class DoorInteraction : MonoBehaviour
 
     void Update()
     {
+        if (!canOpen || player == null) return; // safety check
+
         // Open the door when player is inside trigger and left-clicks
-        if (canOpen && Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
-            HideAllUI();                        // Hide UI while door is moving
-            StartCoroutine(ToggleDoor());       // Start smooth rotation
+            HideAllUI();                  // Hide UI while door is moving
+            StartCoroutine(ToggleDoor()); // Start smooth rotation
         }
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && player != null)
         {
             canOpen = true;
 
@@ -63,13 +65,13 @@ public class DoorInteraction : MonoBehaviour
 
                 if (dot > 0)
                 {
-                    interactionUIs[1].SetActive(true);      // Show back text
-                    interactionUIs[0].SetActive(false);
+                    if (interactionUIs[1] != null) interactionUIs[1].SetActive(true); // Show back text
+                    if (interactionUIs[0] != null) interactionUIs[0].SetActive(false);
                 }
                 else
                 {
-                    interactionUIs[0].SetActive(true);      // Show front text
-                    interactionUIs[1].SetActive(false);
+                    if (interactionUIs[0] != null) interactionUIs[0].SetActive(true); // Show front text
+                    if (interactionUIs[1] != null) interactionUIs[1].SetActive(false);
                 }
             }
         }
@@ -80,7 +82,7 @@ public class DoorInteraction : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             canOpen = false;
-            HideAllUI();        // Hide both UIs when leaving trigger
+            HideAllUI(); // Hide both UIs when leaving trigger
         }
     }
 
@@ -99,9 +101,9 @@ public class DoorInteraction : MonoBehaviour
     // Coroutine to smoothly open/close the door
     IEnumerator ToggleDoor()
     {
-        if (isMoving) yield break; // Prevent overlapping rotations
-        isMoving = true;
+        if (isMoving || player == null) yield break; // safety check
 
+        isMoving = true;
         isOpen = !isOpen; // Toggle door state
         Quaternion targetRot = _closedRotation;
 
@@ -113,8 +115,8 @@ public class DoorInteraction : MonoBehaviour
             targetRot = (dot > 0) ? _openRotationBackward : _openRotationForward;
         }
 
-        // AUDIO
-        if (!GameManager.isSceneTransitioning)
+        // AUDIO (optional safety check)
+        if (!GameManager.isSceneTransitioning && AudioManager.instance != null)
         {
             AudioManager.instance.PlaySound(isOpen ? "DoorOpen" : "DoorClose");
         }
@@ -134,6 +136,7 @@ public class DoorInteraction : MonoBehaviour
         isMoving = false;
     }
 }
+
 
 
 
