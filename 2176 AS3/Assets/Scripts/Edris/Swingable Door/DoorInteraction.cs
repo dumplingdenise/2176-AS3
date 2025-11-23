@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshObstacle))]
 public class DoorInteraction : MonoBehaviour
 {
     [Header("Door Settings")]
@@ -24,8 +26,13 @@ public class DoorInteraction : MonoBehaviour
 
     public GameManager gameManager;
 
+    private NavMeshObstacle navMeshObstacle;
+
     void Start()
     {
+        navMeshObstacle = GetComponent<NavMeshObstacle>();
+        navMeshObstacle.enabled = true; // Start with the door closed and blocking the path
+
         // WARNINGS
         if (player == null) Debug.LogWarning("Player reference is missing!");
         if (interactionUIs == null || interactionUIs.Length < 2)
@@ -107,6 +114,10 @@ public class DoorInteraction : MonoBehaviour
 
         isMoving = true;
         isOpen = !isOpen; // Toggle door state
+
+        // If the door is now open, disable the obstacle. If it's closed, enable it.
+        navMeshObstacle.enabled = !isOpen;
+
         Quaternion targetRot = _closedRotation;
 
         if (isOpen)

@@ -1,7 +1,9 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 [RequireComponent(typeof(BoxCollider))]
+[RequireComponent(typeof(NavMeshObstacle))]
 public class FinalDoorInteraction : MonoBehaviour
 {
     [Header("Door Settings")]
@@ -25,9 +27,13 @@ public class FinalDoorInteraction : MonoBehaviour
     private bool isOpen = false;
     private Quaternion _closedRotation;
     private Quaternion _openRotation;
+    private NavMeshObstacle navMeshObstacle;
 
     void Start()
     {
+        navMeshObstacle = GetComponent<NavMeshObstacle>();
+        navMeshObstacle.enabled = true;
+
         _closedRotation = transform.rotation;
         _openRotation = Quaternion.Euler(transform.eulerAngles + new Vector3(0, openAngle, 0));
 
@@ -69,6 +75,8 @@ public class FinalDoorInteraction : MonoBehaviour
     IEnumerator OpenFinalDoor()
     {
         isOpen = true;
+
+        navMeshObstacle.enabled = false;
 
         interactionUI.SetActive(false);
         lockedUI.SetActive(false);

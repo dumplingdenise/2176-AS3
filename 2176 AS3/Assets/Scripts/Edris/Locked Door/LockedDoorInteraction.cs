@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshObstacle))]
 public class LockedDoorInteraction : MonoBehaviour
 {
     // How far the door rotates when opening (90° by default)
@@ -27,8 +29,13 @@ public class LockedDoorInteraction : MonoBehaviour
 
     public GameManager gameManager;
 
+    private NavMeshObstacle navMeshObstacle;
+
     void Start()
     {
+        navMeshObstacle = GetComponent<NavMeshObstacle>();
+        navMeshObstacle.enabled = true;
+
         // Save the original rotation so player return the door to its closed state
         _closedRotation = transform.rotation;
 
@@ -127,6 +134,8 @@ public class LockedDoorInteraction : MonoBehaviour
         if (player == null) yield break;
 
         isOpen = !isOpen;
+
+        navMeshObstacle.enabled = !isOpen;
 
         // INTERACTION TRACKING - only try to complete task when door is opening
         if (isOpen && gameManager != null)
