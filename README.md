@@ -210,7 +210,7 @@ How to Trigger:
 **1. Pushable Object Interaction**
 
 Description:
-Implemented a push interaction that allows the player to interact and push objects in the game. The pushable objects starts in the locked state. Player must enter the push zone, and press "E" to enable pushing. Once the player activates the interaction, the object becomes physically movable using Unity's Rigidbody system.
+Implemented a push interaction that allows the player to interact and push objects in the game. The pushable objects starts in the locked state. Player must enter the push zone, and press "E" to enable pushing. Once the player activates the interaction, the object becomes physically movable using Unity's Rigidbody system. When the player leaves the push area, the object automatically change it state to not pushable.
 
 Scripts:
 PushInteraction.cs, PushInteractionUI.cs, PlayerPush
@@ -220,3 +220,5 @@ How to Trigger:
 - Text Prompt appear when entering push area.
 - Press "E" to start interacting.
 - Start Pushing the object.
+- Stops pushing and exit the push zone.
+- Objects goes back to idle state
