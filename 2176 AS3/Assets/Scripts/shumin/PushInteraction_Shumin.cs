@@ -17,7 +17,7 @@ public class PushInteraction_Shumin : MonoBehaviour
             return;
         }
 
-        // Box starts locked (not pushable)
+        // Box starts locked
         boxRb.isKinematic = true;
         isUnlocked = false;
     }
@@ -30,7 +30,6 @@ public class PushInteraction_Shumin : MonoBehaviour
         // Player is near and presse E
         if (Input.GetKeyDown(KeyCode.E))
         {
-            //Pushable
             boxRb.isKinematic = false;
 
             isUnlocked = true;
@@ -80,7 +79,7 @@ public class PushInteraction_Shumin : MonoBehaviour
 
         if (!isPlayerNear && boxRb != null)
         {
-            boxRb.isKinematic = true;    // lock again
+            boxRb.isKinematic = true; 
             isUnlocked = false;
 
            // Debug.Log("PushInteraction: player left, box locked (isKinematic = true).");
