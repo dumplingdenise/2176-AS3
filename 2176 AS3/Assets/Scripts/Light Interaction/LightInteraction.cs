@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -8,6 +9,7 @@ public class LightInteraction : MonoBehaviour
     public Light light;
 
     private bool activated = false;
+    private bool isCoolingDown = false;
 
     [Header("Manager References")]
     public UIManager uiManager;
@@ -93,7 +95,31 @@ public class LightInteraction : MonoBehaviour
         light.enabled = false;
         lightText.enabled = false;
 
+        StartCoroutine(CooldownRoutine());
         Debug.Log("ResetLight(): activated = " + activated);
+    }
+
+    private IEnumerator CooldownRoutine()
+    {
+        isCoolingDown = true;
+
+        // Show UI with countdown
+        uiManager.ShowCooldownUI();
+        float cd = cooldownDuration;
+
+        while (cd > 0)
+        {
+            cd -= Time.deltaTime;
+            uiManager.UpdateCooldownUI(cd);
+            yield return null;
+        }
+
+        // Cooldown finished
+        uiManager.HideCooldownUI();
+        isCoolingDown = false;
+
+        // Allow interaction again (ShowText will be called by LookInteraction)
+        lightText.enabled = true;
     }
 
     public bool CanInteract => !activated && lightText.enabled;
