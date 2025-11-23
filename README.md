@@ -1,6 +1,7 @@
 UXG 2176: Assignment 03 - 3D Game
 
 Done By: 4D Shrek
+Team members: Denise Teo, Edris Foo, Joann Bisseling, Teo Shumin
 
 Overview:
 
@@ -17,7 +18,7 @@ Game Objective:
 
 Controls:
 - WASD - Player Movement (Forward, Backward, Left, Right)
-- E - Pick up Objects
+- E - Interactions with Objects (Picking up, Pushing Objects)
 - Left Mouse Click - Interaction with Open/Close doors.
 - Right Mouse Click - Cycle through 3 different camera angles (1st person, fixed angle, 3rd person)
 
@@ -26,3 +27,18 @@ The player completes the level when:
 - The lever has been activated.
 - The item has been collected.
 - The final door is unlocked and opened.
+
+
+Tasks Attempted:
+
+- Denise Teo:
+1.
+
+- Edris Foo:
+1. 
+
+- Joann Bisseling:
+1. 
+
+- Teo Shumin:
+1.
