@@ -51,6 +51,8 @@ public class LookInteraction : MonoBehaviour
                     // Player is NOT facing the object
                     if (currentTarget != null)
                     {
+                        Debug.Log("Current target = " + currentTarget.name +
+              " | CanInteract = " + currentTarget.CanInteract);
                         currentTarget.HideText();
                         currentTarget = null;
                     }

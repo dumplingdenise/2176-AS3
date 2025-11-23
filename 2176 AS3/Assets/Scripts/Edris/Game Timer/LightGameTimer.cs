@@ -68,6 +68,7 @@ public class LightTimer : MonoBehaviour
         if (lightInteraction != null)
         {
             lightInteraction.light.enabled = false;
+            lightInteraction.ResetLight();
         }
 
         // Hide the countdown text
