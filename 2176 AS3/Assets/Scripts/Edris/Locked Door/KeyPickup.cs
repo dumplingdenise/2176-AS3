@@ -18,6 +18,9 @@ public class KeyPickup : MonoBehaviour
     {
         if (canPickUp && Input.GetKeyDown(KeyCode.E))
         {
+            // AUDIO 
+            AudioManager.instance.PlaySound("KeyPickup");
+
             playerHasKey = true;
             interactionUI.SetActive(false);
 

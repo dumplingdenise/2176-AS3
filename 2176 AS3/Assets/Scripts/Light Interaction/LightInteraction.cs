@@ -46,6 +46,12 @@ public class LightInteraction : MonoBehaviour
     {
         if (activated) return;
 
+        // AUDIO
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.PlaySound("LightSwitchOn");
+        }
+
         light.enabled = true;
         activated = true;
         lightText.enabled = false;

@@ -48,6 +48,12 @@ public class LockedDoorInteraction : MonoBehaviour
                 // Show locked UI, hide interaction UI
                 interactionUI.SetActive(false);
                 lockedUI.SetActive(true);
+
+                // AUDIO
+                if (Input.GetMouseButtonDown(0))
+                {
+                    AudioManager.instance.PlaySound("DoorLocked");
+                }
             }
         }
     }
@@ -85,6 +91,12 @@ public class LockedDoorInteraction : MonoBehaviour
     IEnumerator ToggleDoor()
     {
         isOpen = !isOpen;
+
+        // AUDIO
+        if (!GameManager.isSceneTransitioning)
+        {
+            AudioManager.instance.PlaySound(isOpen ? "DoorOpen" : "DoorClose");
+        }
 
         Quaternion targetRot = _closedRotation;
 
