@@ -745,7 +745,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56e996f635f931840948c64880373a0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneToLoad: Jo
+  sceneToLoad: Main
   buttonClickSound: {fileID: 8300000, guid: 5f680fa284dd372499f9b94ecc9902e2, type: 3}
 --- !u!4 &1259883491
 Transform:

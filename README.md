@@ -53,12 +53,27 @@ The game ends and displays a Game Over screen if:
 - Player HP reaches 0 after being hit by the enemy.
 - The countdown timer reaches 0 before escaping.
 
+<ins>Audio System Implementation / Audio & Sound Effects Lists:</ins>
+
+- Footsteps: Multiple footstep sounds randomly selected; plays when the player moves on the ground.
+- Jump: Plays when the player jumps (press Spacebar).
+- Land: Plays when the player lands on the ground after a jump or fall.
+- Key Pickup: Plays when the player picks up the key (press E near key).
+- Door Open: Plays when a door is opened (Left Mouse Click on unlocked door).
+- Door Close: Plays when a door is closed (interact to close).
+- Door Locked: Plays when the player attempts to open a locked door without a key.
+- Victory: Plays when the player successfully completes the level by opening the final door with the key before the timer ends.
+- Game Over: Plays when the player loses (health = 0 or timer expires).
+- Button Click: Plays when the player clicks any UI button.
+- Light Switch On: Plays when the player activates a light switch in the environment.
+- Timer Countdown: Ticking sound planned for when the timer reaches 10 seconds.
+  
 
 <ins>Tasks Attempted:</ins>
 
 **Denise Teo:**
   
-**Player Movement and 3D Camera**
+Player Movement and 3D Camera
 
 Description:
 
@@ -77,7 +92,7 @@ LightGameTimer.cs
 
 **Edris Foo:**
 
-1. Swingable Door Interaction
+**1. Swingable Door Interaction**
 
 Description:
 Implemented a functional door that opens and closes when interacted with. The door uses a hinge-style rotation so that it behaves like a real swing door instead of sliding or teleporting. Players must be within range and use mouse input to activate the door.
@@ -89,7 +104,7 @@ How to Trigger:
 - Stand near the door.
 - Press Left Mouse Click to swing the door open or closed.
 
-2. Task Board Interaction
+**2. Task Board Interaction**
 
 Description:
 Created an interactive task board that allows the player to read the level objectives. When the player approaches and activates the board, the task UI appears and explains what they must complete to escape the room. This helps guide the player at the beginning of the level.
@@ -103,7 +118,7 @@ How to Trigger:
 - Press E to display the task UI.
 - Press Esc / Close UI button to exit.
 
-3. Locked Door With Key Unlock
+**3. Locked Door With Key Unlock**
 
 Description:
 Implemented a locked exit door that cannot be opened until the player has collected the required key. Before the key is obtained, interacting with the door displays a “Door is Locked” message. After the key is collected, the door can be opened normally, allowing the player to finish the level.
@@ -112,7 +127,7 @@ Scripts:
 LockedDoorInteraction.cs
 KeyPickUp.cs
 EndTrigger.cs
-VictoryUIManager.cs
+UIManager.cs
 
 How To Trigger:
 
@@ -120,13 +135,13 @@ How To Trigger:
 - Find and pick up the key using 'E'.
 - Return to the door and use Left Mouse Click to open it.
 
-4. Countdown Timer System
+**4. Countdown Timer System**
 
 Description:
 Implemented a real-time countdown that gives the player a limited duration to complete the level. The timer is always visible in the HUD. If the timer reaches zero before the exit door is opened, the player automatically loses and the Game Over screen is displayed.
 
 Scripts:
-LightGameTimer.cs
+UIManager.cs
 
 How to Trigger:
 - Timer begins automatically when the level starts
@@ -137,9 +152,9 @@ How to Trigger:
 ------------------------------------------
 
 **Joann Bisseling:**
-1. 
+
 
 ------------------------------------------
 
 **Teo Shumin:**
-1.
+

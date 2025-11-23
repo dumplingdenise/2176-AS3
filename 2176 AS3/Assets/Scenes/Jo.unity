@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 9182051}
   - component: {fileID: 9182050}
   - component: {fileID: 9182049}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1219,7 +1219,7 @@ GameObject:
   - component: {fileID: 113597494}
   - component: {fileID: 113597493}
   - component: {fileID: 113597492}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4019,7 +4019,7 @@ GameObject:
   - component: {fileID: 435231095}
   - component: {fileID: 435231097}
   - component: {fileID: 435231096}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: NormalDoorPivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4364,7 +4364,7 @@ GameObject:
   - component: {fileID: 459871475}
   - component: {fileID: 459871474}
   - component: {fileID: 459871473}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13987,7 +13987,7 @@ GameObject:
   - component: {fileID: 1177675068}
   - component: {fileID: 1177675067}
   - component: {fileID: 1177675066}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14848,7 +14848,7 @@ GameObject:
   - component: {fileID: 1248593324}
   - component: {fileID: 1248593326}
   - component: {fileID: 1248593325}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: LockedDoorPivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22442,7 +22442,7 @@ GameObject:
   - component: {fileID: 1726986308}
   - component: {fileID: 1726986310}
   - component: {fileID: 1726986309}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: NormalDoorPivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24852,7 +24852,7 @@ GameObject:
   - component: {fileID: 2134066495}
   - component: {fileID: 2134066494}
   - component: {fileID: 2134066493}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: LockedDoorPivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
