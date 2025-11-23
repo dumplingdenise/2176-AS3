@@ -3,47 +3,89 @@ using UnityEngine;
 public class PushInteraction_Shumin : MonoBehaviour
 {
     [Header("Box to push")]
-    public Rigidbody boxRb;
+    public Rigidbody boxRb;      
 
-    private bool isPlayerNear = false;
+    [HideInInspector] public bool isPlayerNear = false;
+    [HideInInspector] public bool isUnlocked = false;
 
-    private bool hasUnlocked = false;
-    public bool HasUnlocked => hasUnlocked;   // read-only from other scripts
+    Coroutine relockRoutine;
 
-    private void Start()
+    void Start()
     {
         if (boxRb == null)
         {
-            Debug.LogError("PushInteraction_Shumin: boxRb is not assigned!");
             return;
         }
 
-        boxRb.isKinematic = true;   // start locked
-        hasUnlocked = false;
+        // Box starts locked (not pushable)
+        boxRb.isKinematic = true;
+        isUnlocked = false;
     }
 
-    private void Update()
+    void Update()
     {
-        if (!isPlayerNear || boxRb == null || hasUnlocked)
+        if (!isPlayerNear || boxRb == null)
             return;
 
+        // Player is near and presse E
         if (Input.GetKeyDown(KeyCode.E))
         {
+            //Pushable
             boxRb.isKinematic = false;
-            hasUnlocked = true;     // mark as permanently unlocked
-            Debug.Log("PushInteraction: box unlocked.");
+
+            isUnlocked = true;
+
+          //  Debug.Log("PushInteraction: box unlocked (isKinematic = false).");
+
+            // cancel any pending relock if player just unlocked again
+            if (relockRoutine != null)
+            {
+                StopCoroutine(relockRoutine);
+                relockRoutine = null;
+            }
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;
+
         isPlayerNear = true;
+
+        // if player comes back in, cancel relock
+        if (relockRoutine != null)
+        {
+            StopCoroutine(relockRoutine);
+            relockRoutine = null;
+        }
+
+       // Debug.Log("PushInteraction: player entered push area.");
     }
 
-    private void OnTriggerExit(Collider other)
+    void OnTriggerExit(Collider other)
     {
         if (!other.CompareTag("Player")) return;
+
         isPlayerNear = false;
+
+        // Start small delay before locking, to avoid instant exit when the object jiggles a bit
+        if (relockRoutine == null)
+            relockRoutine = StartCoroutine(RelockAfterDelay());
+    }
+
+    System.Collections.IEnumerator RelockAfterDelay()
+    {
+        // small buffer so slight movement doesn't spam exit/enter
+        yield return new WaitForSeconds(0.15f);
+
+        if (!isPlayerNear && boxRb != null)
+        {
+            boxRb.isKinematic = true;    // lock again
+            isUnlocked = false;
+
+           // Debug.Log("PushInteraction: player left, box locked (isKinematic = true).");
+        }
+
+        relockRoutine = null;
     }
 }

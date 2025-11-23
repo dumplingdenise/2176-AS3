@@ -3,45 +3,37 @@ using TMPro;
 
 public class PushBox3DTextUI : MonoBehaviour
 {
-    [Header("3D Text on the box")]
-    public TextMeshPro promptText;
-
+    [Header("Text Prompt")]
+    public TextMeshPro promptText;              
     [Header("Push logic reference")]
     public PushInteraction_Shumin pushInteraction;
 
-    private void Start()
+    void Start()
     {
         if (promptText != null)
             promptText.enabled = false;
     }
 
-    private void Update()
+    void Update()
     {
-        // If box has been unlocked, make sure text is off forever
-        if (pushInteraction != null && pushInteraction.HasUnlocked)
-        {
-            if (promptText != null && promptText.enabled)
-                promptText.enabled = false;
+        if (promptText == null || pushInteraction == null) return;
 
-            // enabled = false;
+        // If box is unlocked (currently pushable), hide text
+        if (pushInteraction.isUnlocked && promptText.enabled)
+        {
+            promptText.enabled = false;
+        }
+        // If player is near AND box is locked, show text
+        else if (!pushInteraction.isUnlocked && pushInteraction.isPlayerNear && !promptText.enabled)
+        {
+            promptText.enabled = true;
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    void OnTriggerExit(Collider other)
     {
         if (!other.CompareTag("Player")) return;
-        if (promptText == null || pushInteraction == null) return;
-
-        // Only show if box has NOT been unlocked yet
-        if (!pushInteraction.HasUnlocked)
-            promptText.enabled = true;
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (!other.CompareTag("Player")) return;
-        if (promptText == null) return;
-
-        promptText.enabled = false;
+        if (promptText != null)
+            promptText.enabled = false;
     }
 }
