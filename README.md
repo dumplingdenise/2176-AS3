@@ -31,10 +31,10 @@ The game features multiple camera perspectives, which the player can switch betw
 
 <ins>Controls:</ins>
 - WASD - Player Movement (Forward, Backward, Left, Right)
-- E - Interactions with Objects (Picking up, Pushing Objects)
+- E - Interactions with Objects (Picking up, Pushing Objects, Turn on Light)
 - Space Bar - Jump
 - Left Mouse Click - Interaction with Open/Close doors
-- Right Mouse Click - Cycle through 3 different camera angles (1st person, fixed angle, 3rd person)
+- Right Mouse Click - Cycle through 3 different camera angles (1st person, fixed angle (within the Fixed Camera Zone only), 3rd person)
 - Esc - Pause Menu / Close UI Menus
 
 
@@ -73,17 +73,71 @@ The game ends and displays a Game Over screen if:
 
 **Denise Teo:**
   
-Player Movement and 3D Camera
+1. Player Movement
 
-Description:
+Description: 
+Implemented basic Player Movement to move and jump with Animation. The player can move freely in 3D space using WASD controls. Movement direction is always based on camera orientation(Example: Pressing W moves the player forward relative to where the active camera is facing). The player uses a CharacterController, preventing diagonal speed boost and ensure smooth collision with floors and walls.
+
+Features implemented:
+-Camera-relative WASD movement
+Proper gravity, falling & grounded checks
+-No diagonal speed increase
+-Uses Unity’s CharacterController for reliable collision
+-Works across all camera modes (1st person, 3rd person, fixed)
 
 How to Trigger:
 
+- WASD to move
+- Space to jump
+
 Scripts:
 PlayerMovement.cs
+
+2. 3D Camera
+
+Description:
+Implemented First Person, Third Person and Fixed Angle Camera view. Players can toggle between Third-Person and First-Person outside of Fixed Angle Zone. Within the Fixed Angle Zone, players can only toggle between the Fixed-Angle cameras in it. Both FP and TP cameras include camera collision detection to prevent clipping through walls or rotating the camera outside the environment.
+
+**First-Person Camera**
+Camera sits within the player's head and rotates based on mouse movement
+
+**Third-Person Camera**
+Camera follows behind the player at a set distance.
+
+**Fixed-Angle Camera**
+A static cinematic camera is activated when the player enters specific trigger zones. When inside a fixed camera zone, the view switches automatically.
+
+How to Trigger:
+
+- Walking into fixed-angle triggers swaps automatically into fixed camera.
+- Walking out of trigger returns to FP/TP mode.
+- FP - TP switching and Fixed-Angle Camera switching based on RMB.
+- Camera collision prevention is automatic during movement and rotation.
+
+Scripts:
 CameraControl.cs
 CameraPivot.cs
 FixedCameraZone.cs
+
+3. Light Interaction
+
+Description:
+The player can interact with lanterns on the ceiling using a raycast=based interaction system. When the player looks at the light while within range, and facing the correct angle, and interaction prompt on the lantern appears. When the player presses E, the light toggles ON, and interaction is disabled. After the light timer ends, the light turns OFF and enters a cooldown period.
+
+During cooldown:
+- Interaction prompt is hidden
+- Interaction is blocked
+- UI displays cooldown countdown
+- After cooldown finishes, prompt reappears and player can toggle the light again.
+
+How to Trigger:
+
+- Look at the light while within interaction range & in the right facing angle (facing away from the lantern will not trigger)
+- Press E: Lights turn on
+- When the timer ends, a Cooldown starts automatically
+- Cooldown ends: Interaction is re-enabled
+
+Scripts:
 LookInteraction.cs
 LightInteraction.cs
 LightGameTimer.cs
