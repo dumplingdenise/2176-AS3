@@ -92,7 +92,9 @@ public class PlayerMovement : MonoBehaviour
         Vector3 move;
         if (CameraControl.Instance != null && CameraControl.Instance.IsInFixedCamera)
         {
-            move = new Vector3(horizontal, 0, vertical).normalized;
+            Vector3 camForward = Vector3.Scale(CameraControl.Instance.transform.forward, new Vector3(1, 0, 1)).normalized;
+            Vector3 camRight = CameraControl.Instance.transform.right;
+            move = (camForward * vertical + camRight * horizontal).normalized;
         }
         else
         {
