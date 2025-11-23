@@ -996,6 +996,144 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1058596354
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1058596356}
+  - component: {fileID: 1058596355}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1058596355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1058596354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d62f24236450e3344a9f8ae47f722385, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: Jump
+    clip: {fileID: 8300000, guid: 03fe52ba9f1aa014ba67bfb2fff14394, type: 3}
+    volume: 0.2
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Land
+    clip: {fileID: 0}
+    volume: 0.2
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: KeyPickup
+    clip: {fileID: 8300000, guid: 5f680fa284dd372499f9b94ecc9902e2, type: 3}
+    volume: 0.2
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: DoorOpen
+    clip: {fileID: 8300000, guid: 093e73e342c08dd4e9285ef396feea60, type: 3}
+    volume: 0.2
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: DoorClose
+    clip: {fileID: 8300000, guid: 0e3bbea9a54905847ad849b949334f64, type: 3}
+    volume: 0.2
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: DoorLocked
+    clip: {fileID: 8300000, guid: 0e3bbea9a54905847ad849b949334f64, type: 3}
+    volume: 0.2
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: ButtonClick
+    clip: {fileID: 8300000, guid: 0d30ca4f20c68f0469c05a8ae4082fcc, type: 3}
+    volume: 0.2
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Victory
+    clip: {fileID: 8300000, guid: f37a1ae93a1fcf3468de2a7b6c8f1cde, type: 3}
+    volume: 0.2
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: GameOver
+    clip: {fileID: 8300000, guid: 32e1532f8bd0bcd45b96cf288ea4c588, type: 3}
+    volume: 0.2
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: LightSwitchOn
+    clip: {fileID: 8300000, guid: 5f680fa284dd372499f9b94ecc9902e2, type: 3}
+    volume: 0.2
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  music: []
+  footstepSounds:
+  - name: Footstep 1
+    clip: {fileID: 8300000, guid: 0d30ca4f20c68f0469c05a8ae4082fcc, type: 3}
+    volume: 0.15
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Footstep 2
+    clip: {fileID: 8300000, guid: d6e2861630b0aa740b0ec1b21b29240a, type: 3}
+    volume: 0.15
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Footstep 3
+    clip: {fileID: 8300000, guid: 9ec2539a66cc19a489b3736b03711a43, type: 3}
+    volume: 0.15
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Footstep 4
+    clip: {fileID: 8300000, guid: d5d7c778226af6b419b0c8a19a8ec0c1, type: 3}
+    volume: 0.15
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Footstep 5
+    clip: {fileID: 8300000, guid: 8b2a4c81d8541074983647c2cc331a2f, type: 3}
+    volume: 0.15
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  timeBetweenSteps: 0.5
+--- !u!4 &1058596356
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1058596354}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.5979655, y: 1.6326296, z: -5.6582494}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1162326637
 GameObject:
   m_ObjectHideFlags: 0
@@ -1420,6 +1558,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 6ca63b564cd6247449df8c2c31351c5b, type: 3}
       propertyPath: m_Name
       value: box_large
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6ca63b564cd6247449df8c2c31351c5b, type: 3}
+      propertyPath: m_TagString
+      value: Pushable
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1999,3 +2141,4 @@ SceneRoots:
   - {fileID: 1591613784}
   - {fileID: 1543433125}
   - {fileID: 281574631}
+  - {fileID: 1058596356}
