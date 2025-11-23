@@ -25,6 +25,8 @@ public class LockedDoorInteraction : MonoBehaviour
 
     private bool playerInRange = false;
 
+    public GameManager gameManager;
+
     void Start()
     {
         // Save the original rotation so player return the door to its closed state
@@ -125,6 +127,12 @@ public class LockedDoorInteraction : MonoBehaviour
         if (player == null) yield break;
 
         isOpen = !isOpen;
+
+        // INTERACTION TRACKING - only try to complete task when door is opening
+        if (isOpen && gameManager != null)
+        {
+            gameManager.TryCompleteTask(this.gameObject);
+        }
 
         // Play open/close sound (only if scene isn't transitioning)
         if (!GameManager.isSceneTransitioning && AudioManager.instance != null)

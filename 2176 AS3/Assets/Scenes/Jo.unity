@@ -1599,7 +1599,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactionUI: {fileID: 613143505}
   keyUI: {fileID: 553235727}
-  gameManager: {fileID: 553235728}
+  gameManager: {fileID: 0}
 --- !u!65 &142819265
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -14656,13 +14656,13 @@ MonoBehaviour:
   music: []
   footstepSounds:
   - name: Footstep 1
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 0d30ca4f20c68f0469c05a8ae4082fcc, type: 3}
     volume: 0.15
     pitch: 1
     loop: 0
     source: {fileID: 0}
-  - name: Footstep 1
-    clip: {fileID: 0}
+  - name: Footstep 2
+    clip: {fileID: 8300000, guid: d6e2861630b0aa740b0ec1b21b29240a, type: 3}
     volume: 0.15
     pitch: 1
     loop: 0
@@ -14888,7 +14888,7 @@ MonoBehaviour:
   player: {fileID: 1302437125}
   interactionUI: {fileID: 35650709}
   lockedUI: {fileID: 840711314}
-  gameManager: {fileID: 553235728}
+  gameManager: {fileID: 0}
 --- !u!65 &1248593326
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -24912,7 +24912,7 @@ MonoBehaviour:
   player: {fileID: 1302437125}
   interactionUI: {fileID: 1849816587}
   lockedUI: {fileID: 1389699557}
-  gameManager: {fileID: 553235728}
+  gameManager: {fileID: 0}
 --- !u!65 &2134066495
 BoxCollider:
   m_ObjectHideFlags: 0

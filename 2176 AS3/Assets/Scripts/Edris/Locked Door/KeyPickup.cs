@@ -8,6 +8,8 @@ public class KeyPickup : MonoBehaviour
 
     private bool canPickUp = false;
 
+    public GameManager gameManager;
+
     void Start()
     {
         if (keyUI != null)
@@ -38,6 +40,9 @@ public class KeyPickup : MonoBehaviour
 
             if (keyUI != null)
                 keyUI.SetActive(true);
+
+            // INTERACTION TRACKING
+            if (gameManager != null) gameManager.TryCompleteTask(this.gameObject);
 
             Destroy(gameObject);
         }
