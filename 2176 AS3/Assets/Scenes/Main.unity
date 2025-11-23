@@ -6897,7 +6897,7 @@ GameObject:
   - component: {fileID: 462452871}
   - component: {fileID: 462452870}
   - component: {fileID: 462452869}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8144,7 +8144,7 @@ GameObject:
   - component: {fileID: 538230062}
   - component: {fileID: 538230061}
   - component: {fileID: 538230060}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10801,6 +10801,7 @@ MonoBehaviour:
   player: {fileID: 1027760769}
   interactionUI: {fileID: 326760879}
   lockedUI: {fileID: 1964070040}
+  gameManager: {fileID: 0}
 --- !u!65 &654284301
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12461,7 +12462,7 @@ GameObject:
   - component: {fileID: 776606566}
   - component: {fileID: 776606565}
   - component: {fileID: 776606564}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15413,7 +15414,7 @@ GameObject:
   - component: {fileID: 950610737}
   - component: {fileID: 950610736}
   - component: {fileID: 950610735}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21819,7 +21820,7 @@ GameObject:
   - component: {fileID: 1318022781}
   - component: {fileID: 1318022780}
   - component: {fileID: 1318022779}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22295,7 +22296,7 @@ GameObject:
   - component: {fileID: 1357364787}
   - component: {fileID: 1357364786}
   - component: {fileID: 1357364785}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27785,7 +27786,7 @@ GameObject:
   - component: {fileID: 1397130532}
   - component: {fileID: 1397130531}
   - component: {fileID: 1397130530}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27893,7 +27894,7 @@ GameObject:
   - component: {fileID: 1397831252}
   - component: {fileID: 1397831251}
   - component: {fileID: 1397831250}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28218,7 +28219,7 @@ GameObject:
   - component: {fileID: 1401245722}
   - component: {fileID: 1401245721}
   - component: {fileID: 1401245720}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30553,7 +30554,7 @@ GameObject:
   - component: {fileID: 1494570854}
   - component: {fileID: 1494570853}
   - component: {fileID: 1494570852}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31179,7 +31180,7 @@ GameObject:
   - component: {fileID: 1508375852}
   - component: {fileID: 1508375851}
   - component: {fileID: 1508375850}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: wall_lockeddoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33717,7 +33718,7 @@ GameObject:
   - component: {fileID: 1666550599}
   - component: {fileID: 1666550598}
   - component: {fileID: 1666550597}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35180,7 +35181,7 @@ GameObject:
   - component: {fileID: 1751407862}
   - component: {fileID: 1751407861}
   - component: {fileID: 1751407860}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38161,6 +38162,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactionUI: {fileID: 778726577}
   keyUI: {fileID: 0}
+  gameManager: {fileID: 0}
 --- !u!65 &1921145941
 BoxCollider:
   m_ObjectHideFlags: 0
