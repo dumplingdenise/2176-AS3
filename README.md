@@ -127,7 +127,7 @@ Scripts:
 LockedDoorInteraction.cs
 KeyPickUp.cs
 EndTrigger.cs
-VictoryUIManager.cs
+UIManager.cs
 
 How To Trigger:
 
@@ -141,7 +141,7 @@ Description:
 Implemented a real-time countdown that gives the player a limited duration to complete the level. The timer is always visible in the HUD. If the timer reaches zero before the exit door is opened, the player automatically loses and the Game Over screen is displayed.
 
 Scripts:
-LightGameTimer.cs
+UIManager.cs
 
 How to Trigger:
 - Timer begins automatically when the level starts
