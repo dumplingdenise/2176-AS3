@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -10,9 +11,10 @@ public class EnemyAI : MonoBehaviour
     public LayerMask whatIsGround, whatIsPlayer, whatIsWall;
 
     [Header("Light Interaction")]
-    public LightInteraction safeZoneLight;
+    public List<LightInteraction> safeZoneLights = new List<LightInteraction>();
     public float lightSafeDistance = 15f;
     public float fleeDistance = 25f;
+    private LightInteraction currentThreateningLight;
 
     [Header("Patrolling")]
     public Transform[] patrolPoints;
@@ -48,25 +50,24 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
-        // The highest priority is checking if we SHOULD be fleeing.
-        if (IsLightAThreat())
+        LightInteraction closestThreat = FindClosestThreateningLight();
+
+        if (closestThreat != null)
         {
-            // If the light is a threat and we are not already in the fleeing state, start fleeing.
-            if (!isFleeing)
+            // If we are not fleeing, or if the new threat is closer than our old one, start fleeing.
+            if (!isFleeing || closestThreat != currentThreateningLight)
             {
-                StartFleeing();
+                StartFleeing(closestThreat);
             }
         }
 
-        // Now, execute behavior based on our current state.
         if (isFleeing)
         {
-            // If we are in the fleeing state, our only job is to handle that.
             HandleFleeing();
         }
         else
         {
-            // If we are not fleeing, execute the normal patrol/chase/attack logic.
+            // Normal AI behavior
             playerInSightRange = CanSeePlayer();
             playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
 
@@ -76,27 +77,39 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // helper function to check if light is a threat
-    private bool IsLightAThreat()
+    private LightInteraction FindClosestThreateningLight()
     {
-        if (safeZoneLight != null && safeZoneLight.light.enabled)
+        LightInteraction closestLight = null;
+        float minDistance = float.MaxValue;
+
+        foreach (var light in safeZoneLights)
         {
-            float distanceToLight = Vector3.Distance(transform.position, safeZoneLight.transform.position);
-            return distanceToLight < lightSafeDistance;
+            // Check if the light is valid and currently turned on
+            if (light != null && light.light.enabled)
+            {
+                float distance = Vector3.Distance(transform.position, light.transform.position);
+
+                // If this light is within the safe distance AND is closer than any other we've found
+                if (distance < lightSafeDistance && distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestLight = light;
+                }
+            }
         }
-        return false;
+        return closestLight; // This will be null if no lights are active and close enough
     }
 
-    // function called to being fleeing state
-    private void StartFleeing()
+    private void StartFleeing(LightInteraction threat)
     {
         isFleeing = true;
-        hasNoticedPlayer = false; // reset notice player flag when fleeing
-        Debug.Log("Light is a threat! Starting to flee.");
+        hasNoticedPlayer = false;
+        currentThreateningLight = threat; // Remember the current threat
+        agent.stoppingDistance = 0f;
 
-        Vector3 directionAwayFromLight = (transform.position - safeZoneLight.transform.position).normalized;
-        // The destination is now calculated using the larger fleeDistance.
-        Vector3 targetDestination = safeZoneLight.transform.position + directionAwayFromLight * fleeDistance;
+        Debug.Log($"Light '{threat.name}' is a threat! Starting to flee.");
+        Vector3 directionAwayFromLight = (transform.position - threat.transform.position).normalized;
+        Vector3 targetDestination = threat.transform.position + directionAwayFromLight * fleeDistance;
 
         NavMeshHit hit;
         if (NavMesh.SamplePosition(targetDestination, out hit, 10f, NavMesh.AllAreas))
@@ -105,30 +118,21 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // function that runs every frame while enemy is fleeing
     private void HandleFleeing()
     {
-        // Check if we have reached our destination.
-        if (!agent.pathPending && agent.remainingDistance < 0.5f)
+        // Check if our current threat is still valid and active
+        bool isThreatStillActive = currentThreateningLight != null &&
+                                   currentThreateningLight.light.enabled &&
+                                   Vector3.Distance(transform.position, currentThreateningLight.transform.position) < lightSafeDistance;
+
+        // If we've reached our destination OR our threat is no longer active, stop fleeing
+        if (!agent.pathPending && agent.remainingDistance < 0.5f || !isThreatStillActive)
         {
-            // We've arrived at our safe spot. Now, is the light still a threat?
-            if (!IsLightAThreat())
-            {
-                // The coast is clear! Stop fleeing and go back to normal.
-                isFleeing = false;
-                Debug.Log("Reached safe spot. Resuming normal behavior.");
-            }
-            else
-            {
-                // We reached the spot, but the light is STILL a threat (e.g., it moved closer).
-                // Find a new spot to run to.
-                Debug.Log("Reached destination, but still not safe. Finding new flee point.");
-                StartFleeing();
-            }
+            isFleeing = false;
+            currentThreateningLight = null;
+            Debug.Log("Threat is gone or safe spot reached. Resuming normal behavior.");
         }
     }
-
-
     private bool CanSeePlayer()
     {
         // First, check if the player is even within the sight radius sphere.
@@ -236,15 +240,18 @@ public class EnemyAI : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, sightRange);
 
-        if (safeZoneLight != null)
+        if (safeZoneLights.Count > 0)
         {
-            // The "danger zone" that triggers the flee
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawWireSphere(safeZoneLight.transform.position, lightSafeDistance);
-
-            // The "target safety zone" where the enemy will run to
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawWireSphere(safeZoneLight.transform.position, fleeDistance);
+            foreach (var light in safeZoneLights)
+            {
+                if (light != null)
+                {
+                    Gizmos.color = Color.cyan;
+                    Gizmos.DrawWireSphere(light.transform.position, lightSafeDistance);
+                    Gizmos.color = Color.magenta;
+                    Gizmos.DrawWireSphere(light.transform.position, fleeDistance);
+                }
+            }
         }
     }
 }
