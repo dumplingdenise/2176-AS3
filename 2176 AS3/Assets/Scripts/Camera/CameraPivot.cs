@@ -18,7 +18,6 @@ public class CameraPivot : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // STOP ROTATION in fixed camera mode
         if (CameraControl.Instance.IsInFixedCamera)
         {
             yaw = 0;

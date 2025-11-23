@@ -66,7 +66,6 @@ public class CameraControl : MonoBehaviour
         Transform pivot = transform.parent;
         Vector3 pivotPos = pivot.position;
 
-        // Determine which target we follow
         Transform target = (fixedCameraTarget != null)
             ? fixedCameraTarget
             : currentTarget;
@@ -74,7 +73,6 @@ public class CameraControl : MonoBehaviour
         Vector3 desiredPos = target.position;
 
 
-        // Direction from pivot to desired camera pos
         Vector3 direction = desiredPos - pivotPos;
         float distance = direction.magnitude;
 
