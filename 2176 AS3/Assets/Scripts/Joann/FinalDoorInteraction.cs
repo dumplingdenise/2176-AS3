@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(BoxCollider))]
 [RequireComponent(typeof(NavMeshObstacle))]
@@ -16,12 +17,15 @@ public class FinalDoorInteraction : MonoBehaviour
     public UIManager uiManager;
 
     [Header("UI Prompts")]
-    public GameObject interactionUI;    
-    public GameObject lockedUI;       
+    public GameObject interactionUI;
+    public GameObject lockedUI;
 
     [Header("Victory Trigger Settings")]
     public BoxCollider victoryTrigger;
     private bool victoryTriggered = false;
+    public Image fadePanel;
+    public ParticleSystem confetti;
+    public float fadeSpeed = 1f;
 
     private bool playerInRange = false;
     private bool isOpen = false;
@@ -40,6 +44,11 @@ public class FinalDoorInteraction : MonoBehaviour
         interactionUI.SetActive(false);
         lockedUI.SetActive(false);
 
+        if (fadePanel != null) fadePanel.color = new Color(fadePanel.color.r, fadePanel.color.g, fadePanel.color.b, 0); // Ensure fade panel is transparent at start
+        else Debug.LogError("Fade Panel is not assigned!", this.gameObject);
+
+        if (confetti == null) Debug.LogError("Confetti particle system is not assigned!", this.gameObject);
+
         if (victoryTrigger == null)
         {
             Debug.LogError("Victory Trigger collider is not assigned!", this.gameObject);
@@ -52,23 +61,36 @@ public class FinalDoorInteraction : MonoBehaviour
 
     void Update()
     {
-        if (playerInRange && !isOpen)
+        if (playerInRange) // Only check for input if the player is in range
         {
+            // Check if all tasks are complete
             if (gameManager != null && gameManager.AreAllTasksComplete)
             {
-                interactionUI.SetActive(true);
-                lockedUI.SetActive(false);
-
-                if (Input.GetKeyDown(KeyCode.E))
+                // If the door is not already open, show the interaction prompt
+                if (!isOpen)
                 {
-                    StartCoroutine(OpenFinalDoor());
+                    interactionUI.SetActive(true);
+                    lockedUI.SetActive(false);
+
+                    // Check for the interaction key press (CHANGED TO MOUSE CLICK)
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        StartCoroutine(OpenFinalDoor());
+                    }
                 }
             }
             else
             {
+                // If tasks are not complete, show the locked prompt
                 interactionUI.SetActive(false);
                 lockedUI.SetActive(true);
             }
+        }
+        else
+        {
+            // Ensure UI is turned off when the player is not in range
+            interactionUI.SetActive(false);
+            lockedUI.SetActive(false);
         }
     }
 
@@ -95,8 +117,6 @@ public class FinalDoorInteraction : MonoBehaviour
         if (other.CompareTag("Player")) playerInRange = true;
     }
 
-
-
     void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -109,18 +129,43 @@ public class FinalDoorInteraction : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (!victoryTriggered && other.CompareTag("Player"))
+        // This check has been improved to only run if the door is open
+        if (isOpen && !victoryTriggered && other.CompareTag("Player"))
         {
             if (other.bounds.Intersects(victoryTrigger.bounds))
             {
                 victoryTriggered = true;
                 Debug.Log("Player entered the victory zone!");
 
-                if (uiManager != null)
-                {
-                    uiManager.ShowVictoryScreen();
-                }
+                // Instead of calling the UIManager directly, we start our new sequence.
+                StartCoroutine(VictorySequence());
             }
+        }
+    }
+
+    private System.Collections.IEnumerator VictorySequence()
+    {
+        // Play confetti particle system
+        if (confetti != null)
+        {
+            confetti.Play();
+        }
+
+        // Fade to black
+        if (fadePanel != null)
+        {
+            Color c = fadePanel.color;
+            while (c.a < 1)
+            {
+                c.a += Time.deltaTime * fadeSpeed;
+                fadePanel.color = c;
+                yield return null;
+            }
+        }
+
+        if (uiManager != null)
+        {
+            uiManager.ShowVictoryScreen();
         }
     }
 }

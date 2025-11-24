@@ -10,6 +10,9 @@ public class PushInteraction_Shumin : MonoBehaviour
 
     Coroutine relockRoutine;
 
+    public GameManager gameManager;
+    private bool taskCompleted = false;
+
     void Start()
     {
         if (boxRb == null)
@@ -20,6 +23,11 @@ public class PushInteraction_Shumin : MonoBehaviour
         // Box starts locked
         boxRb.isKinematic = true;
         isUnlocked = false;
+
+        if (gameManager == null)
+        {
+            Debug.LogWarning("PushInteraction: GameManager is not assigned!");
+        }
     }
 
     void Update()
@@ -34,7 +42,13 @@ public class PushInteraction_Shumin : MonoBehaviour
 
             isUnlocked = true;
 
-          //  Debug.Log("PushInteraction: box unlocked (isKinematic = false).");
+            if (!taskCompleted && gameManager != null)
+            {
+                gameManager.TryCompleteTask(this.gameObject);
+                taskCompleted = true; 
+            }
+
+            //  Debug.Log("PushInteraction: box unlocked (isKinematic = false).");
 
             // cancel any pending relock if player just unlocked again
             if (relockRoutine != null)

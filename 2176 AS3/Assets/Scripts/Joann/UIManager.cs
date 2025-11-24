@@ -6,26 +6,37 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    // enum to define key's state
+    public enum KeyState { Uncollected, Collected }
+
     [Header("UI Panels")]
     public GameObject pauseMenuUI;
     public GameObject gameOverPanel;
     public GameObject hudPanel;
     public GameObject victoryPanel;
+    public GameObject taskBoardPanel;
 
     [Header("HUD Elements")]
     public Image[] hearts; // An array to hold our heart images
     public Slider escapeProgressBar;
     public Sprite fullHeart;
-    public Sprite emptyHeart;
+    public Sprite emptyHeart; 
+    public Image keyImage;
+    public Sprite uncollectedKeySprite;
+    public Sprite collectedKeySprite;
 
     [Header("Timer Elements")]
     public TextMeshProUGUI timerText;
-    private bool isTimerActive = false;
-    private float timerValue = 0f;
+    public TextMeshProUGUI warningText;
     private LightInteraction currentTimedLight;
 
-    [Header("UI Dependencies")]
-    public GameObject taskBoardUI; // From your old PauseManager
+    private int lastBeepSecond;
+    private float timerValue = 0f;
+    private bool isTimerActive = false;
+    private bool isGlobalCooldownActive = false;
+
+    public bool IsLightTimerActive => isTimerActive;
+    public bool IsGlobalLightCooldownActive => isGlobalCooldownActive;
 
     [Header("Required References")]
     public GameObject player;
@@ -36,6 +47,7 @@ public class UIManager : MonoBehaviour
     private CameraPivot cameraPivot;
 
     private bool isPaused = false;
+    private bool isTaskBoardOpen = false;
 
     void Start()
     {
@@ -60,6 +72,10 @@ public class UIManager : MonoBehaviour
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
         if (timerText != null) timerText.gameObject.SetActive(false);
         if (victoryPanel != null) victoryPanel.SetActive(false);
+        if (warningText != null) warningText.gameObject.SetActive(false);
+        if (taskBoardPanel != null) taskBoardPanel.SetActive(false);
+
+        UpdateKeyUI(KeyState.Uncollected);
 
         // Start with the game running
         Time.timeScale = 1f;
@@ -68,21 +84,21 @@ public class UIManager : MonoBehaviour
 
     void Update()
     {
-        // Check for the Escape key to pause/resume
+        // Check for the Escape key to pause/resume OR close the task board
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            // Don't pause if the game over screen is active
-            if (gameOverPanel != null && gameOverPanel.activeInHierarchy)
+            // PRIORITY 1: If the task board is open, close it and do nothing else.
+            if (isTaskBoardOpen)
             {
-                return;
+                ToggleTaskBoard(); // This will close the board.
+                return; // Stop further input processing for this frame.
             }
 
-            // Don't pause if the task board is open
-            if (taskBoardUI != null && taskBoardUI.activeInHierarchy)
-            {
-                return;
-            }
+            // PRIORITY 2: If other menus are open, do not open the pause menu.
+            if (gameOverPanel != null && gameOverPanel.activeInHierarchy) return;
+            if (victoryPanel != null && victoryPanel.activeInHierarchy) return;
 
+            // PRIORITY 3: If nothing else is open, toggle the pause menu.
             if (isPaused)
             {
                 ResumeGame();
@@ -97,6 +113,64 @@ public class UIManager : MonoBehaviour
         {
             HandleTimerCountdown();
         }
+    }
+
+    public void ToggleTaskBoard()
+    {
+        isTaskBoardOpen = !isTaskBoardOpen;
+
+        if (taskBoardPanel != null) taskBoardPanel.SetActive(isTaskBoardOpen);
+
+        if (hudPanel != null) hudPanel.SetActive(!isTaskBoardOpen);
+
+        Cursor.lockState = isTaskBoardOpen ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = isTaskBoardOpen;
+
+        SetPlayerAndCameraEnabled(!isTaskBoardOpen);
+
+        if (isTaskBoardOpen)
+        {
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            Time.timeScale = 1f;
+        }
+    }
+
+    public void UpdateKeyUI(KeyState state)
+    {
+        if (keyImage == null || uncollectedKeySprite == null || collectedKeySprite == null)
+        {
+            Debug.LogWarning("One of the key UI elements is not assigned in the UIManager!");
+            return;
+        }
+
+        switch (state)
+        {
+            case KeyState.Uncollected:
+                keyImage.sprite = uncollectedKeySprite;
+                break;
+            case KeyState.Collected:
+                keyImage.sprite = collectedKeySprite;
+                break;
+        }
+    }
+
+    public void ShowWarningText(string message, float duration)
+    {
+        if (warningText != null)
+        {
+            warningText.text = message;
+            StartCoroutine(WarningTextRoutine(duration));
+        }
+    }
+
+    private IEnumerator WarningTextRoutine(float duration)
+    {
+        warningText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(duration);
+        warningText.gameObject.SetActive(false);
     }
 
     // --- PAUSE & RESUME LOGIC ---
@@ -174,30 +248,57 @@ public class UIManager : MonoBehaviour
         currentTimedLight = lightToTrack;
         isTimerActive = true;
         if (timerText != null) timerText.gameObject.SetActive(true);
+
+        lastBeepSecond = Mathf.CeilToInt(duration) + 1;
     }
 
     private void HandleTimerCountdown()
     {
         timerValue -= Time.deltaTime;
-        if (timerText != null)
-        {
-            timerText.text = $"Time Remaining: {Mathf.Ceil(timerValue)}s";
-        }
+        int currentSecond = Mathf.CeilToInt(timerValue);
+
+        if (timerValue <= 3f && currentSecond < lastBeepSecond && currentSecond > 0) { /* Beep logic is fine */ }
+
+        if (timerText != null) { timerText.text = $"Light Time Remaining: {Mathf.Ceil(timerValue)}s"; }
 
         if (timerValue <= 0)
         {
             isTimerActive = false;
-            if (timerText != null) timerText.gameObject.SetActive(false);
+            // Note: We don't hide the timerText here, the cooldown will handle it.
 
-            // Tell the light to turn off
             if (currentTimedLight != null)
             {
+                // Get the cooldown duration from the specific light that just finished.
+                float cooldown = currentTimedLight.cooldownDuration;
+                // Reset the light object itself.
                 currentTimedLight.ResetLight();
-                
+                // Start the UIManager's global cooldown routine.
+                StartCoroutine(GlobalCooldownRoutine(cooldown));
             }
 
-            Debug.Log("Light timer finished!");
+            Debug.Log("Light timer finished! Global cooldown started.");
         }
+    }
+
+    // --- NEW: This coroutine now lives in the UIManager ---
+    private IEnumerator GlobalCooldownRoutine(float duration)
+    {
+        isGlobalCooldownActive = true;
+
+        // Take control of the UI text to show the cooldown
+        ShowCooldownUI();
+        float cd = duration;
+
+        while (cd > 0)
+        {
+            cd -= Time.deltaTime;
+            UpdateCooldownUI(cd);
+            yield return null;
+        }
+
+        // Cooldown finished
+        HideCooldownUI();
+        isGlobalCooldownActive = false;
     }
 
     // ---------- Cooldown Timer UI --------------
@@ -247,12 +348,16 @@ public class UIManager : MonoBehaviour
 
     public void RestartLevel()
     {
+        KeyPickup.playerHasKey = false;
+        UpdateKeyUI(KeyState.Uncollected);
         StartCoroutine(LoadSceneWithDelay(SceneManager.GetActiveScene().name));
     }
 
     public void GoToMainMenu()
     {
-        StartCoroutine(LoadSceneWithDelay("Menu")); // Assumes your main menu scene is named "Menu"
+        KeyPickup.playerHasKey = false;
+        UpdateKeyUI(KeyState.Uncollected);
+        StartCoroutine(LoadSceneWithDelay("Menu"));
     }
 
     // --- UTILITY FUNCTIONS ---

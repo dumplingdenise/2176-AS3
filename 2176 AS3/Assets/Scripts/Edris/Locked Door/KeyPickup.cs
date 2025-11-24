@@ -9,6 +9,7 @@ public class KeyPickup : MonoBehaviour
     private bool canPickUp = false;
 
     public GameManager gameManager;
+    public UIManager uiManager;
 
     void Start()
     {
@@ -34,6 +35,9 @@ public class KeyPickup : MonoBehaviour
                 Debug.LogWarning("KeyPickup: AudioManager instance is missing!");
 
             playerHasKey = true;
+
+            if (uiManager != null)
+                uiManager.UpdateKeyUI(UIManager.KeyState.Collected);
 
             if (interactionUI != null)
                 interactionUI.SetActive(false);

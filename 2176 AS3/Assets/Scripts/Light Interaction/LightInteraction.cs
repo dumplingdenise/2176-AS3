@@ -9,7 +9,6 @@ public class LightInteraction : MonoBehaviour
     public Light light;
 
     private bool activated = false;
-    private bool isCoolingDown = false;
 
     [Header("Manager References")]
     public UIManager uiManager;
@@ -46,8 +45,10 @@ public class LightInteraction : MonoBehaviour
     }
     public void ShowText()
     {
-        if (!activated)
+        if (!activated && (uiManager == null || !uiManager.IsGlobalLightCooldownActive))
+        {
             lightText.enabled = true;
+        }
     }
 
     public void HideText()
@@ -57,6 +58,20 @@ public class LightInteraction : MonoBehaviour
 
     public void ToggleLight()
     {
+        // check 1 - is a light currently in its cooldown phase?
+        if (uiManager != null && uiManager.IsGlobalLightCooldownActive)
+        {
+            uiManager.ShowWarningText("Lights are cooling down", 2f);
+            return;
+        }
+
+        // check 2 - is another light's main timer currently active?
+        if (uiManager != null && uiManager.IsLightTimerActive)
+        {
+            uiManager.ShowWarningText("Only one light can be active at a time", 2f);
+            return;
+        }
+
         if (activated) return;
 
         Debug.Log("ToggleLight(): activated before press = " + activated);
@@ -88,38 +103,13 @@ public class LightInteraction : MonoBehaviour
             light.enabled = false;
         }
     }
-
     public void ResetLight()
     {
         activated = false;
         light.enabled = false;
         lightText.enabled = false;
 
-        StartCoroutine(CooldownRoutine());
-        Debug.Log("ResetLight(): activated = " + activated);
-    }
-
-    private IEnumerator CooldownRoutine()
-    {
-        isCoolingDown = true;
-
-        // Show UI with countdown
-        uiManager.ShowCooldownUI();
-        float cd = cooldownDuration;
-
-        while (cd > 0)
-        {
-            cd -= Time.deltaTime;
-            uiManager.UpdateCooldownUI(cd);
-            yield return null;
-        }
-
-        // Cooldown finished
-        uiManager.HideCooldownUI();
-        isCoolingDown = false;
-
-        // Allow interaction again (ShowText will be called by LookInteraction)
-        lightText.enabled = true;
+        Debug.Log("ResetLight(): Light has been reset.");
     }
 
     public bool CanInteract => !activated && lightText.enabled;

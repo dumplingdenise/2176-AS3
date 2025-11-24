@@ -24,13 +24,8 @@ public class AudioManager : MonoBehaviour
     [Header("Sound Effects")]
     public Sound[] sounds;
 
-    [Header("Music")]
-    public Sound[] music;
-
     [Header("Footstep System")]
-    [Tooltip("The list of footstep sounds to cycle through.")]
     public Sound[] footstepSounds;
-    [Tooltip("The time in seconds between each footstep sound.")]
     public float timeBetweenSteps = 0.5f;
 
     // Internal variables for the footstep system
@@ -46,7 +41,6 @@ public class AudioManager : MonoBehaviour
 
         // Setup AudioSources for all sound types
         foreach (Sound s in sounds) { SetupAudioSource(s); }
-        foreach (Sound m in music) { SetupAudioSource(m); }
         foreach (Sound f in footstepSounds) { SetupAudioSource(f); }
     }
 
@@ -115,13 +109,6 @@ public class AudioManager : MonoBehaviour
         Sound s = Array.Find(sounds, sound => sound.name == name);
         if (s == null) { Debug.LogWarning("Sound: '" + name + "' not found!"); return; }
         s.source.Play();
-    }
-
-    public void PlayMusic(string name)
-    {
-        Sound m = Array.Find(music, mus => mus.name == name);
-        if (m == null) { Debug.LogWarning("Music: '" + name + "' not found!"); return; }
-        m.source.Play();
     }
 
 

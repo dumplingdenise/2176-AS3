@@ -5,11 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Pushable
-  - DoorInteraction
-  - LockedDoorInteraction
-  - KeyInteraction
-  - BoardInteraction
-  - LightInteraction
+  - InteractionTask
   layers:
   - Default
   - TransparentFX
