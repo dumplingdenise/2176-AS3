@@ -12,8 +12,8 @@ public class EnemyAI : MonoBehaviour
 
     [Header("Light Interaction")]
     public List<LightInteraction> safeZoneLights = new List<LightInteraction>();
-    public float lightSafeDistance = 15f;
-    public float fleeDistance = 25f;
+    public float lightSafeDistance = 15f; // how close a light needs to be to be considered a threat
+    public float fleeDistance = 25f; // how far the enemy tries to run from a threatening light
     private LightInteraction currentThreateningLight;
 
     [Header("Patrolling")]
@@ -29,45 +29,49 @@ public class EnemyAI : MonoBehaviour
     // states
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange;
-    private bool isFleeing = false;
-    private bool hasNoticedPlayer = false;
+    private bool isFleeing = false; // state flag to override all other behaviours
+    private bool hasNoticedPlayer = false; // flag to play "notice" sound only once
 
     private void Awake()
     {
+        // find player & get navmesh component at start
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
     }
     private void Start()
     {
+        // initial warning to prevent ai from getting stuck
         if (fleeDistance <= lightSafeDistance)
         {
-            Debug.LogWarning("Warning: Flee Distance should be greater than Light Safe Distance on the EnemyAI, or the enemy may get stuck.", this.gameObject);
+            Debug.LogWarning("Warning: Flee Distance should be greater than Light Safe Distance on the EnemyAI, or the enemy may get stuck.");
         }
 
-        // Start patrolling towards the first point
+        // start the patrol cycle immediately on game start
         GoToNextPatrolPoint();
     }
 
     private void Update()
     {
+        // check for light threats first - fleeing is the highest priority state
         LightInteraction closestThreat = FindClosestThreateningLight();
 
         if (closestThreat != null)
         {
-            // If we are not fleeing, or if the new threat is closer than our old one, start fleeing.
+            // enter flee state if a new threat is found
             if (!isFleeing || closestThreat != currentThreateningLight)
             {
                 StartFleeing(closestThreat);
             }
         }
 
+        // main state machine logic
         if (isFleeing)
         {
             HandleFleeing();
         }
         else
         {
-            // Normal AI behavior
+            // normal ai behaviour when not fleeing
             playerInSightRange = CanSeePlayer();
             playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
 
@@ -77,6 +81,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    // iterates through all safe zone lights to find closest active one
     private LightInteraction FindClosestThreateningLight()
     {
         LightInteraction closestLight = null;
@@ -84,12 +89,12 @@ public class EnemyAI : MonoBehaviour
 
         foreach (var light in safeZoneLights)
         {
-            // Check if the light is valid and currently turned on
+            // only considers lights that are currently turned on
             if (light != null && light.light.enabled)
             {
                 float distance = Vector3.Distance(transform.position, light.transform.position);
 
-                // If this light is within the safe distance AND is closer than any other we've found
+                // checks if this light is both a threat & closest one found so far
                 if (distance < lightSafeDistance && distance < minDistance)
                 {
                     minDistance = distance;
@@ -97,20 +102,22 @@ public class EnemyAI : MonoBehaviour
                 }
             }
         }
-        return closestLight; // This will be null if no lights are active and close enough
+        return closestLight; // returns null if no lights are active/close enough
     }
 
     private void StartFleeing(LightInteraction threat)
     {
         isFleeing = true;
-        hasNoticedPlayer = false;
-        currentThreateningLight = threat; // Remember the current threat
+        hasNoticedPlayer = false;  // reset player notice when fleeing
+        currentThreateningLight = threat; // remember current threat
         agent.stoppingDistance = 0f;
 
+        // calculate a target point directly away from the light source
         Debug.Log($"Light '{threat.name}' is a threat! Starting to flee.");
         Vector3 directionAwayFromLight = (transform.position - threat.transform.position).normalized;
         Vector3 targetDestination = threat.transform.position + directionAwayFromLight * fleeDistance;
 
+        // find closest valid point on navmesh to calculated target
         NavMeshHit hit;
         if (NavMesh.SamplePosition(targetDestination, out hit, 10f, NavMesh.AllAreas))
         {
@@ -118,14 +125,15 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    // manages ai's behavior while in fleeing state
     private void HandleFleeing()
     {
-        // Check if our current threat is still valid and active
+        // checks if current threat is still active & close enough to be a danger
         bool isThreatStillActive = currentThreateningLight != null &&
                                    currentThreateningLight.light.enabled &&
                                    Vector3.Distance(transform.position, currentThreateningLight.transform.position) < lightSafeDistance;
 
-        // If we've reached our destination OR our threat is no longer active, stop fleeing
+        // stops fleeing once destination is reached / threat is gone
         if (!agent.pathPending && agent.remainingDistance < 0.5f || !isThreatStillActive)
         {
             isFleeing = false;
@@ -133,25 +141,25 @@ public class EnemyAI : MonoBehaviour
             Debug.Log("Threat is gone or safe spot reached. Resuming normal behavior.");
         }
     }
+
+    // more advanced visibility check than a simple sphere
     private bool CanSeePlayer()
     {
-        // First, check if the player is even within the sight radius sphere.
+        // cheap sphere check first for performance
         if (Physics.CheckSphere(transform.position, sightRange, whatIsPlayer))
         {
-            // If they are, then perform a line-of-sight check.
+            // if player is in range, do an expensive raycast to check for line of sight
             Vector3 directionToPlayer = (player.position - transform.position).normalized;
             float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-            // Shoot a ray from the enemy towards the player.
-            // If the ray hits a wall before it hits the player, then the enemy can't see the player.
+            // if raycast does not hit a wall, enemy can see player
             if (!Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, whatIsWall))
             {
-                // The raycast did NOT hit a wall, so the enemy can see the player.
                 return true;
             }
         }
 
-        // If either the sphere check or the raycast check fails, the enemy cannot see the player.
+        // if either sphere check / raycast check fails = enemy cannot see player
         return false;
     }
 
@@ -162,15 +170,16 @@ public class EnemyAI : MonoBehaviour
         {
             hasNoticedPlayer = false;
         }
-        // If the agent is not busy and has reached its destination...
+
+        // moves to next patrol point only after reaching current one
         if (!agent.pathPending && agent.remainingDistance < 0.5f)
         {
-            // ...go to the next point.
             GoToNextPatrolPoint();
         }
     }
     void GoToNextPatrolPoint()
     {
+        // safety check to prevent errors if no patrol points are assigned
         if (patrolPoints.Length == 0)
         {
             Debug.LogError("Patrol points array is empty! Assign points in the Inspector.", this.gameObject);
@@ -181,12 +190,13 @@ public class EnemyAI : MonoBehaviour
 
         Debug.Log("Enemy heading to patrol point: " + patrolPoints[currentPatrolIndex].name);
 
+        // use modulo operator to cycle through patrol points array
         currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
     }
 
     private void ChasePlayer()
     {
-        // play "notice" sound 1st time this state is entered
+        // play "notice" sound only the first time enemy enters this state
         if (!hasNoticedPlayer)
         {
             hasNoticedPlayer = true;
@@ -201,7 +211,7 @@ public class EnemyAI : MonoBehaviour
 
     private void AttackPlayer()
     {
-        // make sure enemy does not move
+        // stop enemy from moving to attack
         agent.SetDestination(transform.position);
 
         // create temporary vector & flatten y-axis so enemy only rotates horizontally to look @ player
@@ -209,6 +219,7 @@ public class EnemyAI : MonoBehaviour
         lookPosition.y = transform.position.y;
         transform.LookAt(lookPosition);
 
+        // attack cooldown logic
         if (!alreadyAttacked)
         {
             if (punchVFX != null)
@@ -217,22 +228,26 @@ public class EnemyAI : MonoBehaviour
                 punchVFX.Play();
             }
 
+            // get player health component & apply damage
             PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
             if (playerHealth != null)
             {
                 playerHealth.TakeDamage(attackDamage);
             }
 
+            // call ResetAttack after a delay to enable next attack
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
     }
 
+    // helper function used by invoke to reset the attack cooldown
     private void ResetAttack()
     {
         alreadyAttacked = false;
     }
 
+    // draw wire spheres in the editor to visualize ai ranges for easier debugging
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
@@ -240,6 +255,7 @@ public class EnemyAI : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, sightRange);
 
+        // draw the light interaction ranges for every assigned light
         if (safeZoneLights.Count > 0)
         {
             foreach (var light in safeZoneLights)
