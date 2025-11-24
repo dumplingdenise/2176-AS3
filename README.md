@@ -166,8 +166,8 @@ BoardInteraction.cs, UIManager.cs
 How to Trigger:
 
 - Look at the task board within interaction range.
-- Press E to display the task UI.
-- Press Esc / Close UI button to exit.
+- Press 'E' to display the task UI panel.
+- Press 'Esc' to close / exit the task board UI panel.
 
 **3. Locked Door With Key Unlock**
 
