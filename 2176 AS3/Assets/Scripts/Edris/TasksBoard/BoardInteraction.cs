@@ -2,54 +2,55 @@ using UnityEngine;
 
 public class BoardInteraction : MonoBehaviour
 {
-    public GameObject taskUI;
-    public GameObject interactionText; // NEW
+    public GameObject interactionText; 
     public float interactDistance = 3f;
     public Transform player;
     public GameManager gameManager;
+    public UIManager uiManager;
 
-    private bool isOpen = false;
+    private bool taskCompleted = false;
+
+    void Start()
+    {
+        if (uiManager == null)
+        {
+            Debug.LogError("BoardInteraction is missing a reference to the UIManager!", this.gameObject);
+        }
+        if (interactionText != null) interactionText.SetActive(false);
+    }
 
     void Update()
     {
+        if (player == null) return;
+
         float distance = Vector3.Distance(player.position, transform.position);
 
-        // Show interaction text when close enough
-        if (distance <= interactDistance && !isOpen)
+        if (distance <= interactDistance)
         {
-            interactionText.SetActive(true);
-
-            if (Input.GetKeyDown(KeyCode.E))        // Opens / Interacts with the Task Board by trigger 'E' key
+            if (uiManager != null && !uiManager.taskBoardPanel.activeInHierarchy)
             {
-                ToggleTaskUI();
+                interactionText.SetActive(true);
+            }
+
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+
+                if (uiManager != null)
+                {
+                    uiManager.ToggleTaskBoard();
+                }
+
+                if (!taskCompleted && gameManager != null)
+                {
+                    gameManager.TryCompleteTask(this.gameObject);
+                    taskCompleted = true;
+                }
             }
         }
         else
         {
             interactionText.SetActive(false);
         }
-
-        // Close UI
-        if (isOpen && Input.GetKeyDown(KeyCode.Escape))     // Closes the Task Board by trigger 'Esc' key
-        {
-            ToggleTaskUI();
-        }
     }
 
-    void ToggleTaskUI()
-    {
-        isOpen = !isOpen;
-        taskUI.SetActive(isOpen);
-
-        Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
-        Cursor.visible = isOpen;
-
-        // INTERACTION TRACKING - only try to complete task 1st time board is open
-        if (isOpen && gameManager != null)
-        {
-            gameManager.TryCompleteTask(this.gameObject);
-        }
-    }
 }
-
-

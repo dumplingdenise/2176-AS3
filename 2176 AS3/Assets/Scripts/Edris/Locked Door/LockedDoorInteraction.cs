@@ -31,6 +31,8 @@ public class LockedDoorInteraction : MonoBehaviour
 
     private NavMeshObstacle navMeshObstacle;
 
+    public UIManager uiManager;
+
     void Start()
     {
         navMeshObstacle = GetComponent<NavMeshObstacle>();
@@ -54,6 +56,9 @@ public class LockedDoorInteraction : MonoBehaviour
             lockedUI.SetActive(false);
         else
             Debug.LogWarning("LockedDoorInteraction: lockedUI not assigned!");
+
+        if (uiManager == null)
+            Debug.LogWarning("LockedDoorInteraction: UIManager is not assigned!");
 
         // Warn if the player reference wasn't set in the Inspector
         if (player == null)
@@ -138,9 +143,22 @@ public class LockedDoorInteraction : MonoBehaviour
         navMeshObstacle.enabled = !isOpen;
 
         // INTERACTION TRACKING - only try to complete task when door is opening
-        if (isOpen && gameManager != null)
+        if (isOpen)
         {
-            gameManager.TryCompleteTask(this.gameObject);
+            // Set the global key status to false, consuming the key
+            KeyPickup.playerHasKey = false;
+
+            // Tell the UIManager to switch the UI sprite back to the 'uncollected' state
+            if (uiManager != null)
+            {
+                uiManager.UpdateKeyUI(UIManager.KeyState.Uncollected);
+            }
+
+            // INTERACTION TRACKING - only try to complete task when door is opening
+            if (gameManager != null)
+            {
+                gameManager.TryCompleteTask(this.gameObject);
+            }
         }
 
         // Play open/close sound (only if scene isn't transitioning)
