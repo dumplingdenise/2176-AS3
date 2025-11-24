@@ -40,18 +40,17 @@ The game features multiple camera perspectives, which the player can switch betw
 
 <ins>Completion Condition:</ins>
 
-The player completes the level when:
-- The countdown timer has started and is still running.
-- The player has located and collected the required key item.
-- The final exit door has been unlocked using the collected key.
-- The player opens the exit door before the timer reaches zero / avoid reaching to 0 health bar from enemy.
+The player completes the level by successfully navigating the environment and completing a series of objectives before being caught. To win, the player must:
+- Explore and Interact: Locate and interact with 10 different objects (such as doors, lights, and boxes) scattered throughout the level. This is the main requirement to unlock the final victory door.
+- Find the Hidden Key: Discover the key that is hidden somewhere in the level.
+- Unlock the Path: Use the collected key to open a specific locked door that blocks the path leading towards the final exit area.
+- Escape: After completing the 10 interactions, open the now-unlocked victory door to win the game.
 
 
 <ins>Failure Condition:</ins>
 
 The game ends and displays a Game Over screen if:
-- Player HP reaches 0 after being hit by the enemy.
-- The countdown timer reaches 0 before escaping.
+- Player HP reaches 0: The player loses all their health after being attacked three times by the main enemy AI (Shrek).
 
 <ins>Audio System Implementation / Audio & Sound Effects Lists:</ins>
 
@@ -204,54 +203,66 @@ How to Trigger:
 **1. Audio System**
 
 Description:
-Implemented the Audio System as to enhance player immersion and provide clear feedback for interactions within the game environment. The goal was to create a flexible and reusable audio structure that allowed different objects (e.g., doors, switches, pickups) to trigger sound effects without duplicating audio sources across multiple GameObjects.
+Implemented a centralized Audio System to enhance player immersion and provide clear feedback for all interactions within the game. The system is built on a Singleton pattern, ensuring that all sounds are managed from a single, persistent source. This design is efficient, scalable, and keeps the game hierarchy clean by removing the need for individual AudioSource components on every interactive object. A key feature is the dynamic footstep system, which plays sounds in response to player movement.
 
 Scripts:
-
+AudioManager.cs
 
 How it Works / Implementation Summary:
-
-- Created a centralized SoundManager using the Singleton pattern to manage all audio playback.
-- Removed individual AudioSource components from interactive objects to reduce redundancy and improve performance.
-
-Added reusable public functions for:
-- PlaySFX() for one-shot sound effects
-- PlayMusic() for looping background audio
-- StopMusic() for victory transition
-
-Integrated spatial audio for environmental sounds when relevant.
+- Centralized Singleton Manager: Uses a static instance to allow any script to easily play sounds. The manager persists across scene loads using DontDestroyOnLoad.
+- Automated AudioSource Setup: The manager automatically creates and configures AudioSource components for all sound effects, music, and footstep clips assigned in the Inspector.
+- Dynamic Footstep System: A timer-based system, controlled by SetWalkingState(), plays footstep sounds from an array when the player is moving, creating realistic audio feedback.
+- Simple Public Functions: Other scripts can easily play audio using straightforward calls like PlaySound("SoundName") and PlayMusic("MusicName").
 
 How to Trigger:
 Players will hear audio when:
-
-- Opening a door (Left Mouse Click when near a door)
-- Activating a switch
-- Picking up key objects
-- Completing the level (Victory music plays automatically)
-- Level Fail (Lose music plays automatically
-- Player movment and receiving damagers
-- Enemy detects player (Aleart warning sfx)
+- The player is moving (Footsteps will play automatically).
+- Opening a door (DoorOpen sound).
+- Activating a switch or completing a task.
+- Picking up key objects.
+- The enemy detects the player (EnemyNotice warning SFX).
+- The player takes damage (Hurt sound).
+- A UI button is clicked (ButtonClick sound).
+- The level is completed (Victory music).
+- The player fails the level (GameOver music).
 
 **2. Enemy AI (SHREK)**
 
 Description:
-Implemented the Enemy AI that introduces challenge and tension by having an enemy react to the player's presence. The enemy will detect, chase, and attack the player that has a higher chance of the player to not complete the game level. It will return to its starting point depending on player actions. This system encourages the player to stay alert and adds risk when navigating the level.
+Implemented a state-driven Enemy AI that introduces a dynamic challenge for the player. The enemy uses a NavMeshAgent to intelligently navigate the environment. It can patrol a predefined route, detect and chase the player, and initiate attacks. A unique feature of this AI is its fleeing mechanic; it perceives certain activated lights as threats and will actively run away from them, creating strategic opportunities for the player to manipulate its behavior.
 
 Scripts:
+EnemyAI.cs
+
+How it Works / Implementation Summary:
+- State Machine: Switches between patrolling, chasing, and attacking states based on player proximity and line-of-sight.
+- Intelligent Detection: Uses a Physics.Raycast to ensure the enemy has a clear line of sight before chasing, preventing it from seeing through walls.
+- Fleeing Behavior: The AI's highest priority is to flee from activated safeZoneLights. When a light is a threat, it overrides all other behaviors to run to a safe distance, adding a strategic layer to gameplay.
+- Attack Cooldown: An Invoke() timer manages the attack speed, ensuring fair and balanced combat encounters.
 
 How to Trigger in Game:
-The enemy AI activates when:
+- Chase: The player enters the enemy's sightRange with a clear line of sight.
+- Attack: The player is within the enemy's attackRange.
+- Patrol: The player is not in sight range. The enemy will follow its designated path.
+- Flee: The player activates a LightInteraction object near the enemy, causing it to run away.
 
-- The player enters the enemy detection zone → enemy begins chasing
-- The player leaves the zone → enemy returns to original position
-
-**3. Basic UI**
+**3. UI & Game State Management**
 
 Description:
-The Basic UI system provides all player-facing menus required for gameplay flow, including the Main Menu, Pause Menu, HUD, and Game Over/Victory screens. The UI allows the player to start the game, pause during gameplay, view progress, and return to the main menu after finishing or failing the level.
+A comprehensive UI and game management system that controls the entire game flow, from the main menu to the end-game screens. This system handles not only the display of information (HUD, menus) but also manages critical game states like pausing, game over conditions, and win conditions. It acts as the central hub that connects player actions, game progress, and user feedback.
 
 Scripts:
+UIManager.cs
+GameManager.cs
+PlayerHealth.cs
+MainMenuManager.cs
+FinalDoorInteraction.cs
 
+How it Works / Implementation Summary:
+- UIManager.cs: The central UI controller that manages all panels (HUD, Pause, Game Over), handles the game's pause state by controlling Time.timeScale and cursor visibility, and updates all HUD elements like health, progress bars, and timers.
+- GameManager.cs: Tracks the win condition by counting unique tasks completed in a HashSet to prevent duplicate counting. It provides a global AreAllTasksComplete flag for other scripts to check.
+- PlayerHealth.cs: Manages the player's health, provides a public TakeDamage() function for the enemy to call, and communicates with the UIManager to update the health display and show the game over screen.
+- MainMenuManager.cs & FinalDoorInteraction.cs: These scripts handle the start and end of the game flow. The main menu uses coroutines for smooth scene loading, while the final door checks the GameManager's win condition to trigger the victory sequence.
 
 ------------------------------------------
 
