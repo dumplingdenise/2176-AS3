@@ -183,23 +183,74 @@ How To Trigger:
 - Find and pick up the key using 'E'.
 - Return to the door and use Left Mouse Click to open it.
 
-**4. Countdown Timer System**
+**4. Light Cooldown System**
 
 Description:
-Implemented a real-time countdown that gives the player a limited duration to complete the level. The timer is always visible in the HUD. If the timer reaches zero before the exit door is opened, the player automatically loses and the Game Over screen is displayed.
+Implemented a light-based cooldown mechanic that limits how long the player can keep a light source activated. When the player switches the light on, a cooldown timer appears in the HUD and begins decreasing in real time. Once the timer reaches zero, the light automatically switches off and the player must wait for the cooldown to replenish before turning it back on again. This adds tension and encourages strategic use of lighting during exploration.
 
 Scripts:
-UIManager.cs
+UIManager.cs, LightInteraction.cs
 
 How to Trigger:
-- Timer begins automatically when the level starts
-- Continues ticking until:
-1. Player opens the exit door (victory), or
-2. Timer reaches zero and triggers Game Over
+- Cooldown begins when the player turns the light on
+- Cooldown bar decreases while the light is active
+- Light automatically turns off when cooldown reaches zero
+- Cooldown refills only when the light is off
 
 ------------------------------------------
 
 **Joann Bisseling:**
+
+**1. Audio System**
+
+Description:
+Implemented the Audio System as to enhance player immersion and provide clear feedback for interactions within the game environment. The goal was to create a flexible and reusable audio structure that allowed different objects (e.g., doors, switches, pickups) to trigger sound effects without duplicating audio sources across multiple GameObjects.
+
+Scripts:
+
+
+How it Works / Implementation Summary:
+
+- Created a centralized SoundManager using the Singleton pattern to manage all audio playback.
+- Removed individual AudioSource components from interactive objects to reduce redundancy and improve performance.
+
+Added reusable public functions for:
+- PlaySFX() for one-shot sound effects
+- PlayMusic() for looping background audio
+- StopMusic() for victory transition
+
+Integrated spatial audio for environmental sounds when relevant.
+
+How to Trigger:
+Players will hear audio when:
+
+- Opening a door (Left Mouse Click when near a door)
+- Activating a switch
+- Picking up key objects
+- Completing the level (Victory music plays automatically)
+- Level Fail (Lose music plays automatically
+- Player movment and receiving damagers
+- Enemy detects player (Aleart warning sfx)
+
+**2. Enemy AI (SHREK)**
+
+Description:
+Implemented the Enemy AI that introduces challenge and tension by having an enemy react to the player's presence. The enemy will detect, chase, and attack the player that has a higher chance of the player to not complete the game level. It will return to its starting point depending on player actions. This system encourages the player to stay alert and adds risk when navigating the level.
+
+Scripts:
+
+How to Trigger in Game:
+The enemy AI activates when:
+
+- The player enters the enemy detection zone → enemy begins chasing
+- The player leaves the zone → enemy returns to original position
+
+**3. Basic UI**
+
+Description:
+The Basic UI system provides all player-facing menus required for gameplay flow, including the Main Menu, Pause Menu, HUD, and Game Over/Victory screens. The UI allows the player to start the game, pause during gameplay, view progress, and return to the main menu after finishing or failing the level.
+
+Scripts:
 
 
 ------------------------------------------
