@@ -1,10 +1,14 @@
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class FixedCameraZone : MonoBehaviour
 {
     public static FixedCameraZone ActiveZone;
+
+    [Header("Group ID (Zones with same ID act as ONE zone)")]
+    public string zoneGroupID = "DefaultGroup";
 
     [Header("Assign Fixed Camera Targets")]
     public List<Transform> cameraTargets;
@@ -17,6 +21,9 @@ public class FixedCameraZone : MonoBehaviour
 
     private int index = 0;
     private bool playerInside = false;
+    private bool switchingCamera = false;
+    private float zoneSwitchCooldown = 0.3f;
+    private float lastZoneSwitchTime = -1f;
 
     void Update()
     {
@@ -39,25 +46,65 @@ public class FixedCameraZone : MonoBehaviour
             }
         }
 
-        // Enter zone
         if (!playerInside && isInside)
-        {
-            playerInside = true;
-            ActiveZone = this;
-            index = 0;
-
-            CameraControl.Instance.SetFixedCamera(cameraTargets[index]);
-            Debug.Log("Player entered FIXED CAMERA ZONE");
-        }
-        // Exit zone
+            EnterZone();
         else if (playerInside && !isInside)
-        {
-            playerInside = false;
-            ActiveZone = null;
+            ExitZone();
+    }
 
-            CameraControl.Instance.ClearFixedCamera();
-            Debug.Log("Player left FIXED CAMERA ZONE");
+    void EnterZone()
+    {
+        if (Time.time < lastZoneSwitchTime + zoneSwitchCooldown)
+            return;
+
+        lastZoneSwitchTime = Time.time;
+
+        playerInside = true;
+
+        if (ActiveZone == null)
+        {
+            ActivateThisZone();
+            return;
         }
+
+        if (ActiveZone.zoneGroupID == this.zoneGroupID)
+        {
+            ActiveZone = this;
+            return;
+        }
+
+        ActivateThisZone();
+    }
+
+    void ActivateThisZone()
+    {
+        ActiveZone = this;
+        index = 0;
+        StartCoroutine(DelayedSetCamera());
+    }
+
+    void ExitZone()
+    {
+        playerInside = false;
+
+        // Only clear the camera if absolutely leaving the ENTIRE zone group
+        if (ActiveZone == this)
+        {
+            ActiveZone = null;
+            CameraControl.Instance.ClearFixedCamera();
+        }
+    }
+    private IEnumerator DelayedSetCamera()
+    {
+        switchingCamera = true;
+
+        // Wait exactly 1 frame – essential to avoid bounce
+        yield return null;
+
+        if (playerInside)
+            CameraControl.Instance.SetFixedCamera(cameraTargets[index]);
+
+        switchingCamera = false;
     }
 
     public void SwitchToNextCamera()
