@@ -66,7 +66,7 @@ The game ends and displays a Game Over screen if:
 - Game Over: Plays when the player loses (health = 0 or timer expires).
 - Button Click: Plays when the player clicks any UI button.
 - Light Switch On: Plays when the player activates a light switch in the environment.
-- Timer Countdown: Ticking sound planned for when the timer reaches 10 seconds.
+- Timer Countdown: Ticking sound planned for when the timer reaches 10 seconds to get the player feel alarmed of the remaining duration.
   
 
 <ins>Tasks Attempted:</ins>
@@ -137,7 +137,7 @@ How to Trigger:
 - Cooldown ends: Interaction is re-enabled
 
 Scripts:
-LookInteraction.cs, LightInteraction.cs, LightGameTimer.cs
+LookInteraction.cs, LightInteraction.cs, UIManager.cs
 
 ------------------------------------------
 
@@ -161,7 +161,7 @@ Description:
 Created an interactive task board that allows the player to read the level objectives. When the player approaches and activates the board, the task UI appears and explains what they must complete to escape the room. This helps guide the player at the beginning of the level.
 
 Scripts:
-BoardInteraction.cs
+BoardInteraction.cs, UIManager.cs
 
 How to Trigger:
 
