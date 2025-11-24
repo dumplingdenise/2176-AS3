@@ -21,12 +21,13 @@ public class FinalDoorInteraction : MonoBehaviour
     public GameObject lockedUI;
 
     [Header("Victory Trigger Settings")]
-    public BoxCollider victoryTrigger;
+    public BoxCollider victoryTrigger; // a separate trigger to detect when the player wins
     private bool victoryTriggered = false;
     public Image fadePanel;
     public ParticleSystem confetti;
     public float fadeSpeed = 1f;
 
+    // internal state variables for the door
     private bool playerInRange = false;
     private bool isOpen = false;
     private Quaternion _closedRotation;
@@ -35,16 +36,20 @@ public class FinalDoorInteraction : MonoBehaviour
 
     void Start()
     {
+        // get navmesh obstacle component & ensure it's enabled at start
         navMeshObstacle = GetComponent<NavMeshObstacle>();
         navMeshObstacle.enabled = true;
 
+        // store the initial closed rotation & calculate the target open rotation
         _closedRotation = transform.rotation;
         _openRotation = Quaternion.Euler(transform.eulerAngles + new Vector3(0, openAngle, 0));
 
+        // ensure all ui is hidden on start
         interactionUI.SetActive(false);
         lockedUI.SetActive(false);
 
-        if (fadePanel != null) fadePanel.color = new Color(fadePanel.color.r, fadePanel.color.g, fadePanel.color.b, 0); // Ensure fade panel is transparent at start
+        // safety checks for all assigned references
+        if (fadePanel != null) fadePanel.color = new Color(fadePanel.color.r, fadePanel.color.g, fadePanel.color.b, 0); // ensure fade panel is transparent at start
         else Debug.LogError("Fade Panel is not assigned!", this.gameObject);
 
         if (confetti == null) Debug.LogError("Confetti particle system is not assigned!", this.gameObject);
@@ -61,18 +66,19 @@ public class FinalDoorInteraction : MonoBehaviour
 
     void Update()
     {
-        if (playerInRange) // Only check for input if the player is in range
+        // only check for input if the player is within the trigger zone
+        if (playerInRange)
         {
-            // Check if all tasks are complete
+            // check with the gamemanager if the unlock condition has been met
             if (gameManager != null && gameManager.AreAllTasksComplete)
             {
-                // If the door is not already open, show the interaction prompt
+                // only show interaction prompt if the door isn't already open
                 if (!isOpen)
                 {
                     interactionUI.SetActive(true);
                     lockedUI.SetActive(false);
 
-                    // Check for the interaction key press (CHANGED TO MOUSE CLICK)
+                    // listen for the player's click to open the door
                     if (Input.GetMouseButtonDown(0))
                     {
                         StartCoroutine(OpenFinalDoor());
@@ -81,30 +87,30 @@ public class FinalDoorInteraction : MonoBehaviour
             }
             else
             {
-                // If tasks are not complete, show the locked prompt
+                // if tasks are not complete, show the locked prompt
                 interactionUI.SetActive(false);
                 lockedUI.SetActive(true);
             }
         }
         else
         {
-            // Ensure UI is turned off when the player is not in range
+            // ensure ui is turned off when the player is not in range
             interactionUI.SetActive(false);
             lockedUI.SetActive(false);
         }
     }
 
+    // coroutine to handle the door opening animation over several frames
     IEnumerator OpenFinalDoor()
     {
-        isOpen = true;
-
-        navMeshObstacle.enabled = false;
-
-        interactionUI.SetActive(false);
+        isOpen = true; // set state to open to prevent this from running again
+        navMeshObstacle.enabled = false; // disable obstacle so ai can pass through
+        interactionUI.SetActive(false); // hide all ui prompts
         lockedUI.SetActive(false);
 
         if (AudioManager.instance != null) AudioManager.instance.PlaySound("DoorOpen");
 
+        // smoothly rotate the door towards its open position
         while (Quaternion.Angle(transform.rotation, _openRotation) > 0.01f)
         {
             transform.rotation = Quaternion.RotateTowards(transform.rotation, _openRotation, openSpeed * 100f * Time.deltaTime);
@@ -112,11 +118,13 @@ public class FinalDoorInteraction : MonoBehaviour
         }
     }
 
+    // detect when the player enters the door's main trigger
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player")) playerInRange = true;
     }
 
+    // detect when the player leaves the door's main trigger
     void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -127,31 +135,31 @@ public class FinalDoorInteraction : MonoBehaviour
         }
     }
 
+    // this is checked every frame the player is inside the trigger
     private void OnTriggerStay(Collider other)
     {
-        // This check has been improved to only run if the door is open
+        // only check for victory after the door is open & victory hasn't already been triggered
         if (isOpen && !victoryTriggered && other.CompareTag("Player"))
         {
+            // checks if the player is intersecting with the specific victory trigger box
             if (other.bounds.Intersects(victoryTrigger.bounds))
             {
                 victoryTriggered = true;
-                Debug.Log("Player entered the victory zone!");
-
-                // Instead of calling the UIManager directly, we start our new sequence.
                 StartCoroutine(VictorySequence());
             }
         }
     }
 
+    // coroutine to handle the sequence of events upon winning the game
     private System.Collections.IEnumerator VictorySequence()
     {
-        // Play confetti particle system
+        // play visual effects
         if (confetti != null)
         {
             confetti.Play();
         }
 
-        // Fade to black
+        // smoothly fade the screen to black
         if (fadePanel != null)
         {
             Color c = fadePanel.color;
@@ -163,6 +171,7 @@ public class FinalDoorInteraction : MonoBehaviour
             }
         }
 
+        // tell the uimanager to show the final victory screen
         if (uiManager != null)
         {
             uiManager.ShowVictoryScreen();

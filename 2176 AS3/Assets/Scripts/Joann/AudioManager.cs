@@ -19,6 +19,7 @@ public class Sound
 
 public class AudioManager : MonoBehaviour
 {
+    // static variable to hold the single instance of AudioManager so it can be accessed globally
     public static AudioManager instance;
 
     [Header("Sound Effects")]
@@ -33,24 +34,25 @@ public class AudioManager : MonoBehaviour
     [Tooltip("The time in seconds between each footstep sound.")]
     public float timeBetweenSteps = 0.5f;
 
-    // Internal variables for the footstep system
+    // internal variables for footstep system to track timing & which audio clip to play next
     private int footstepIndex = 0;
     private float footstepTimer = 0f;
-    private bool isPlayerWalking = false; // This will be controlled by the PlayerMovement script
+    private bool isPlayerWalking = false; // controlled by PlayerMovement script
 
     void Awake()
     {
+        // implement singleton pattern -  ensures only 1 instance of audiomanager exists
         if (instance == null) { instance = this; }
         else { Destroy(gameObject); return; }
         DontDestroyOnLoad(gameObject);
 
-        // Setup AudioSources for all sound types
+        // loops through each sound array & creates audio source component for every clip
         foreach (Sound s in sounds) { SetupAudioSource(s); }
         foreach (Sound m in music) { SetupAudioSource(m); }
         foreach (Sound f in footstepSounds) { SetupAudioSource(f); }
     }
 
-    // Helper function to create an AudioSource for a Sound object
+    // helper function - creates & configures audio source component for a given sound
     void SetupAudioSource(Sound s)
     {
         s.source = gameObject.AddComponent<AudioSource>();
@@ -74,11 +76,11 @@ public class AudioManager : MonoBehaviour
 
     void Update()
     {
-        // This is the core of the new footstep logic
+        // run footstep timer every frame 
         HandleFootsteps();
     }
 
-    // A public method that the Player can call to update its walking state
+    // public method that Player can call to update its walking state
     public void SetWalkingState(bool walking)
     {
         isPlayerWalking = walking;
@@ -86,30 +88,28 @@ public class AudioManager : MonoBehaviour
 
     private void HandleFootsteps()
     {
-        // If the player is not walking, or if there are no footstep sounds, do nothing.
+        // only run timer if player is walking & footstep audio is available
         if (!isPlayerWalking || footstepSounds.Length == 0)
         {
-            footstepTimer = 0f; // Reset timer when not walking
+            // reset timer when not walking
+            footstepTimer = 0f;
             return;
         }
 
-        // Increment the timer
+        // increment timer
         footstepTimer += Time.deltaTime;
 
-        // If the timer has reached the desired interval
+        // when timer reaches time between steps - play sound & reset
         if (footstepTimer >= timeBetweenSteps)
         {
-            footstepTimer = 0f; // Reset the timer
+            footstepTimer = 0f; // reset timer
+            footstepSounds[footstepIndex].source.Play(); // play current footstep sound
 
-            // Play the current footstep sound
-            footstepSounds[footstepIndex].source.Play();
-
-            // Move to the next footstep sound in the list, looping back to the start if necessary
+            // use modulo operator for looping
             footstepIndex = (footstepIndex + 1) % footstepSounds.Length;
         }
     }
 
-    // --- Standard Play Functions ---
     public void PlaySound(string name)
     {
         Sound s = Array.Find(sounds, sound => sound.name == name);
@@ -123,6 +123,5 @@ public class AudioManager : MonoBehaviour
         if (m == null) { Debug.LogWarning("Music: '" + name + "' not found!"); return; }
         m.source.Play();
     }
-
 
 }
